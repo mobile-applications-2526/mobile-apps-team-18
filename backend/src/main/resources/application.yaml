@@ -24,3 +24,8 @@ cors:
     - http://localhost
     - http://localhost:3000
     - http://localhost:3001
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
