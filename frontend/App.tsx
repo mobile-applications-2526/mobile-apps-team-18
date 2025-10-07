@@ -7,7 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 export default function App() {
   return (
     <SafeAreaProvider>
-      <ScreenContent title="Home" path="App.tsx" />
+      <ScreenContent title="The homepage of KotConnect" path="App.tsx" />
       <StatusBar style="auto" />
     </SafeAreaProvider>
   );
