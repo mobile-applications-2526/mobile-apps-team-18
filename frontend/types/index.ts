@@ -24,6 +24,14 @@ export type SignupUser = {
   locatie: string;
 };
 
+export type Profile = {
+  id: number;
+  username: string;
+  email: string;
+  geboortedatum: string;
+  locatie: string;
+};
+
 export type Event = {
   id: number;
   name: string;

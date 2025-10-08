@@ -1,11 +1,11 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LoginScreen from '../screens/LoginScreen';
+import ProfileScreen from '../../screens/ProfileScreen';
 
-export default function login() {
+export default function ProfileRoute() {
   return (
     <SafeAreaView className="flex-1 bg-gray-900">
-      <LoginScreen />
+      <ProfileScreen />
     </SafeAreaView>
   );
 }
