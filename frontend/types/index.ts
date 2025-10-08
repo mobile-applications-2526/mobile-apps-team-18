@@ -25,3 +25,11 @@ export type SignupUser = {
   geboortedatum: string; // ISO date
   locatie: string;
 };
+
+export type Profile = {
+  id: number;
+  username: string;
+  email: string;
+  geboortedatum: string;
+  locatie: string;
+};

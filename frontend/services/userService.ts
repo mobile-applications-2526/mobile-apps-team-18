@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { User, SignupInput, SignupUser } from '../types';
+import { User, SignupInput, SignupUser, Profile } from '../types';
 
 
 
@@ -73,4 +73,27 @@ export function authHeader(token: string) {
   return { Authorization: `Bearer ${token}` } as const;
 }
 
-export const userService = { login, signup };
+export async function getProfile(token: string): Promise<Profile> {
+  const res = await fetch(`${API_BASE}/users/ping`, {
+    headers: {
+      ...authHeader(token),
+      Accept: 'application/json',
+    },
+  });
+  return handleJson<Profile>(res);
+}
+
+export async function updateProfile(token: string, input: Partial<Profile>): Promise<Profile> {
+  const res = await fetch(`${API_BASE}/users/me`, {
+    method: 'PUT',
+    headers: {
+      ...authHeader(token),
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+  return handleJson<Profile>(res);
+}
+
+export const userService = { login, signup, getProfile, updateProfile };

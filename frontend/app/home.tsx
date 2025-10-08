@@ -1,11 +1,7 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import HomeScreen from "../screens/HomeScreen";
+import React from 'react';
+import { Redirect } from 'expo-router';
 
-export default function index() {
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <HomeScreen />
-    </SafeAreaView>
-  );
+export default function HomeRedirect() {
+  // Redirect legacy /home route into the tabbed home so the bottom tabs show up
+  return <Redirect href="/(tabs)/home" />;
 }
