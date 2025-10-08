@@ -54,7 +54,7 @@ async function handleJson<T>(res: Response): Promise<T> {
 
 export async function getTasks(address: string): Promise<Task[]> {
   const token = await getAuthToken();
-  const url = `${API_BASE}/tasks${`?address=${encodeURIComponent(address)}`}`;
+  const url = `${API_BASE}/tasks/all`;
   const res = await fetch(url, {
     method: 'GET',
     headers: {

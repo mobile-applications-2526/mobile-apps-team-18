@@ -24,7 +24,7 @@ export const TaskHighlights = ({ tasks }: Props) => {
       <Text className="text-emerald-600">Tasks</Text>
       <Text className="mt-1 text-2xl font-bold text-emerald-800">{upcomingCount} upcoming</Text>
       <Text className="mt-1 text-emerald-700">
-        {next ? `Next: ${next.name} • ${next.date}` : "No upcoming tasks"}
+        {next ? `Next: ${next.title} • ${next.date}` : "No upcoming tasks"}
       </Text>
     </View>
   );

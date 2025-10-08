@@ -35,7 +35,7 @@ export type Event = {
 
 export type Task = {
   id: number;
-  name: string;
+  title: string;
   date: string;
   assignedUser?: User;
   description?: string;

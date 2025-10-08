@@ -55,7 +55,7 @@ async function handleJson<T>(res: Response): Promise<T> {
 
 export async function getEvents(address: string): Promise<Event[]> {
   const token = await getAuthToken();
-  const url = `${API_BASE}/events${`?address=${encodeURIComponent(address)}`}`;
+  const url = `${API_BASE}/events/all`;
   const res = await fetch(url, {
     method: 'GET',
     headers: {
