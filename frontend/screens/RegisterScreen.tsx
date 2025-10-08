@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Platform } from 'react-native';
-import { userService } from '../services/userService';
+import {
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+  Image,
+  Platform,
+  KeyboardAvoidingView,
+  ScrollView,
+} from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import type { SignupInput } from '../types';
+import { userService } from '../services/userService';
 import { router } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
+import { ArrowLeft } from 'lucide-react-native';
+import CustomInput from '../components/CustomInput';
 
 const RegisterScreen = () => {
   const { login } = useAuth();
+
+  const [step, setStep] = useState(1);
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -16,9 +28,13 @@ const RegisterScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [locatie, setLocatie] = useState('');
   const [password, setPassword] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const canSubmit = !loading;
+
+  const canSubmitStep1 = username.trim().length > 0 && email.trim().length > 0;
+  const canSubmitStep2 = geboortedatum.length > 0 && locatie.trim().length > 0;
+  const canSubmitStep3 = password.length > 0;
 
   const formatDate = (d: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -27,14 +43,12 @@ const RegisterScreen = () => {
 
   const onChangeBirth = (event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
-      // Android returns 'set' or 'dismissed'
       if (event.type === 'set' && selectedDate) {
         setBirthDate(selectedDate);
         setGeboortedatum(formatDate(selectedDate));
       }
       setShowDatePicker(false);
     } else {
-      // iOS updates continuously on change
       if (selectedDate) {
         setBirthDate(selectedDate);
         setGeboortedatum(formatDate(selectedDate));
@@ -43,24 +57,15 @@ const RegisterScreen = () => {
   };
 
   const handleRegister = async () => {
-    if (!canSubmit) return;
     setLoading(true);
     setError(null);
     try {
-      const input: SignupInput = {
-        username,
-        email,
-        geboortedatum,
-        locatie,
-        password,
-      };
+      const input = { username, email, geboortedatum, locatie, password };
       const data = await userService.signup(input);
-
       if (data.token) {
         await login({ token: data.token, username: data.username });
         router.replace('/home');
       } else {
-        // Otherwise, go to login
         router.replace('/login');
       }
     } catch (e: any) {
@@ -71,128 +76,144 @@ const RegisterScreen = () => {
   };
 
   return (
-    <View className="flex-1 px-6 py-6">
-      <View className="relative mb-8 flex-row items-center justify-center">
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/')}
-          className="absolute left-0 rounded-xl  bg-gray-800 px-4 hover:bg-red-600 active:opacity-80">
-          <Text className="text-4xl font-bold text-white">←</Text>
-        </Pressable>
-        <Text className="text-center text-lg font-semibold text-white">Register</Text>
-      </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View className="flex-1 justify-between bg-gray-900 px-6 py-8">
+          {/* Hero image */}
+          <View className="flex-1 items-center justify-center">
+            <Image
+              source={require('../assets/hero-picture.png')}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="contain"
+              accessibilityLabel="KotConnect logo"
+            />
+          </View>
 
-      <View className="items-center">
-        <Text className="text-4xl">📝</Text>
-        <Text className="mt-2 text-xl font-bold text-white">Create your account</Text>
-        <Text className="mt-1 text-center text-gray-500">
-          Join KotConnect to organize your home
-        </Text>
-      </View>
-
-      <View className="mt-8 gap-4">
-        <LabeledInput
-          label="Username"
-          value={username}
-          onChangeText={setUsername}
-          placeholder="username"
-          className="text-white"
-        />
-        <LabeledInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          placeholder="you@example.com"
-          autoCapitalize="none"
-          className="text-white"
-        />
-        {Platform.OS === 'web' ? (
-          <LabeledInput
-            label="Birthdate"
-            value={geboortedatum}
-            onChangeText={setGeboortedatum}
-            placeholder="YYYY-MM-DD"
-            className="text-white"
-          />
-        ) : (
+          {/* Form Steps */}
           <View>
-            <Text className="mb-2 text-sm font-medium text-white">Birthdate</Text>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => setShowDatePicker(true)}
-              className="rounded-2xl border border-gray-300 px-4 py-3">
-              <Text className="text-base text-white">
-                {geboortedatum ? geboortedatum : 'YYYY-MM-DD'}
-              </Text>
-            </Pressable>
-            {showDatePicker && (
-              <DateTimePicker
-                value={birthDate ?? new Date(2000, 0, 1)}
-                mode="date"
-                display={'spinner'}
-                onChange={onChangeBirth}
-                maximumDate={new Date()}
-              />
-            )}
-            {Platform.OS === 'ios' && showDatePicker && (
-              <View className="mt-2 flex-row justify-end">
+            {/* Header */}
+            <View className="relative mb-6 flex-row items-center gap-4">
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => router.push('/')}
+                className="rounded-xl border border-gray-600 px-2 py-1">
+                <ArrowLeft color="#9CA3AF" size={24} />
+              </Pressable>
+              <Text className="text-4xl font-semibold text-white">Register</Text>
+            </View>
+
+            {/* Step 1: Username & Email */}
+            {step === 1 && (
+              <View>
+                <CustomInput
+                  label="Username"
+                  value={username}
+                  onChangeText={setUsername}
+                  placeholder="Enter username"
+                  className="mb-4"
+                />
+                <CustomInput
+                  label="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  keyboardType="email-address"
+                  className="mb-6"
+                />
                 <Pressable
-                  accessibilityRole="button"
-                  onPress={() => setShowDatePicker(false)}
-                  className="rounded-xl bg-emerald-600 px-4 py-2 active:opacity-90">
-                  <Text className="text-white">Done</Text>
+                  disabled={!canSubmitStep1}
+                  onPress={() => setStep(2)}
+                  className={`mt-4 w-full items-center justify-center rounded-2xl py-4 active:opacity-90 ${
+                    canSubmitStep1 ? 'bg-emerald-600' : 'bg-emerald-300'
+                  }`}>
+                  <Text className="text-base font-semibold text-black">Next</Text>
                 </Pressable>
               </View>
             )}
+
+            {/* Step 2: Birthdate & Location */}
+            {step === 2 && (
+              <View>
+                <Text className="mb-2 text-sm font-medium text-white">Birthdate</Text>
+                <Pressable
+                  onPress={() => setShowDatePicker(true)}
+                  className="mb-4 rounded-2xl border border-gray-700 bg-gray-800 px-4 py-3">
+                  <Text className="text-white">{geboortedatum || 'YYYY-MM-DD'}</Text>
+                </Pressable>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={birthDate ?? new Date(2000, 0, 1)}
+                    mode="date"
+                    display="spinner"
+                    onChange={onChangeBirth}
+                    maximumDate={new Date()}
+                  />
+                )}
+                <CustomInput
+                  label="Location"
+                  value={locatie}
+                  onChangeText={setLocatie}
+                  placeholder="Your kot address"
+                  className="mb-6"
+                />
+                <View className="mt-4 flex-row justify-between">
+                  <Pressable
+                    onPress={() => setStep(1)}
+                    className="rounded-2xl bg-gray-700 px-4 py-4 active:opacity-90">
+                    <Text className="text-base font-semibold text-white">Back</Text>
+                  </Pressable>
+                  <Pressable
+                    disabled={!canSubmitStep2}
+                    onPress={() => setStep(3)}
+                    className={`rounded-2xl px-4 py-4 active:opacity-90 ${
+                      canSubmitStep2 ? 'bg-emerald-600' : 'bg-emerald-300'
+                    }`}>
+                    <Text className="text-base font-semibold text-black">Next</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+
+            {/* Step 3: Password */}
+            {step === 3 && (
+              <View>
+                <CustomInput
+                  label="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Password"
+                  secureTextEntry
+                  className="mb-6"
+                />
+                {error && <Text className="mb-4 text-center text-sm text-red-600">{error}</Text>}
+                <View className="mt-4 flex-row justify-between">
+                  <Pressable
+                    onPress={() => setStep(2)}
+                    className="rounded-2xl bg-gray-700 px-4 py-4 active:opacity-90">
+                    <Text className="text-base font-semibold text-white">Back</Text>
+                  </Pressable>
+                  <Pressable
+                    disabled={!canSubmitStep3}
+                    onPress={handleRegister}
+                    className={`rounded-2xl px-4 py-4 active:opacity-90 ${
+                      canSubmitStep3 ? 'bg-emerald-600' : 'bg-emerald-300'
+                    }`}>
+                    {loading ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text className="text-base font-semibold text-black">Register</Text>
+                    )}
+                  </Pressable>
+                </View>
+              </View>
+            )}
           </View>
-        )}
-        <LabeledInput
-          label="Location"
-          value={locatie}
-          onChangeText={setLocatie}
-          placeholder="Your kot address"
-          className="text-white"
-        />
-        <LabeledInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          placeholder="••••••••"
-          secureTextEntry
-          className="text-white"
-        />
-      </View>
-
-      {error ? <Text className="mt-2 text-sm text-red-600">{error}</Text> : null}
-
-      <View className="mt-6">
-        <Pressable
-          accessibilityRole="button"
-          disabled={!canSubmit}
-          onPress={handleRegister}
-          className={`w-full items-center justify-center rounded-2xl px-4 py-4 active:opacity-90 ${
-            canSubmit ? 'bg-emerald-600' : 'bg-emerald-300'
-          }`}>
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-base font-semibold text-white">Register</Text>
-          )}
-        </Pressable>
-      </View>
-    </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
-
-const LabeledInput = ({ label, ...props }: any) => (
-  <View>
-    <Text className="mb-2 text-sm font-medium text-white">{label}</Text>
-    <TextInput
-      {...props}
-      placeholderTextColor="#9CA3AF"
-      className="rounded-2xl border border-gray-300 px-4 py-3 text-base text-white"
-    />
-  </View>
-);
 
 export default RegisterScreen;
