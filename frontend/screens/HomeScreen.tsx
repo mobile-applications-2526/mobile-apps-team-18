@@ -14,17 +14,14 @@ export const HomeScreen = () => {
   const { logout, auth } = useAuth();
 
   const handleLogout = async () => {
-    console.log("logginout");
     await logout();
-    router.replace("/login");
+    router.replace('/login');
   };
 
   if (!auth) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-red-500 font-bold">
-          Please login to access this page.
-        </Text>
+        <Text className="font-bold text-red-500">Please login to access this page.</Text>
       </View>
     );
   }
@@ -34,15 +31,12 @@ export const HomeScreen = () => {
       {/* Header */}
       <View className="px-6 pt-6">
         <View className="flex-row items-center justify-between">
-          <Text className="text-3xl font-extrabold text-gray-900">
-            KotConnect
-          </Text>
+          <Text className="text-3xl font-extrabold text-gray-900">KotConnect</Text>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Log out"
             onPress={handleLogout}
-            className="rounded-full bg-red-50 px-3 py-1 active:opacity-80"
-          >
+            className="rounded-full bg-red-50 px-3 py-1 active:opacity-80">
             <Text className="text-sm font-semibold text-red-600">Log out</Text>
           </Pressable>
         </View>
@@ -61,9 +55,7 @@ export const HomeScreen = () => {
 
       {/* Quick actions */}
       <View className="mt-6 px-6">
-        <Text className="mb-3 text-base font-semibold text-gray-900">
-          Quick actions
-        </Text>
+        <Text className="mb-3 text-base font-semibold text-gray-900">Quick actions</Text>
         <View className="flex-row gap-3">
           <QuickAction
             label="New task"
@@ -91,15 +83,9 @@ export const HomeScreen = () => {
 
       {/* Upcoming section */}
       <View className="mt-6 px-6">
-        <Text className="mb-3 text-base font-semibold text-gray-900">
-          Upcoming
-        </Text>
+        <Text className="mb-3 text-base font-semibold text-gray-900">Upcoming</Text>
         <Card>
-          <UpcomingItem
-            title="Clean kitchen"
-            subtitle="Due today • Assigned to You"
-            badge="Task"
-          />
+          <UpcomingItem title="Clean kitchen" subtitle="Due today • Assigned to You" badge="Task" />
           <Divider />
           <UpcomingItem
             title="Buy groceries"
@@ -107,23 +93,15 @@ export const HomeScreen = () => {
             badge="Task"
           />
           <Divider />
-          <UpcomingItem
-            title="Movie night"
-            subtitle="Fri 20:00 • Living room"
-            badge="Event"
-          />
+          <UpcomingItem title="Movie night" subtitle="Fri 20:00 • Living room" badge="Event" />
         </Card>
       </View>
 
       {/* Household */}
       <View className="mt-6 px-6">
-        <Text className="mb-3 text-base font-semibold text-gray-900">
-          Your household
-        </Text>
+        <Text className="mb-3 text-base font-semibold text-gray-900">Your household</Text>
         <Card>
-          <Text className="text-lg font-semibold text-gray-900">
-            Kot Leuven - Tiensestraat
-          </Text>
+          <Text className="text-lg font-semibold text-gray-900">Kot Leuven - Tiensestraat</Text>
           <Text className="mt-1 text-gray-600">4 roommates • 2 open tasks</Text>
           <View className="mt-4 flex-row gap-3">
             <Pill text="You" />

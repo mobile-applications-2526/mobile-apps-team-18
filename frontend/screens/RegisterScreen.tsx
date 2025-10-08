@@ -56,7 +56,6 @@ const RegisterScreen = () => {
       };
       const data = await userService.signup(input);
 
-      // If your signup returns a token, auto-login
       if (data.token) {
         await login({ token: data.token, username: data.username });
         router.replace('/home');
