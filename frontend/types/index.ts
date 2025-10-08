@@ -18,6 +18,7 @@ export type SignupInput = {
 
 // Backend returns the created user entity (without token)
 export type SignupUser = {
+  token: any;
   id: number;
   username: string;
   email: string;
