@@ -50,7 +50,7 @@ export const ProfileDetails = ({
   profile: Profile;
   onEdit?: (field: 'username' | 'email' | 'geboortedatum' | 'locatie') => void;
 }) => (
-  <View className="rounded-2xl border border-gray-700 bg-gray-800 p-5">
+  <View className="rounded-2xl border border-gray-700 bg-gray-800 pt-6 px-5">
     <Row label="Username" value={profile.username} onEdit={onEdit ? () => onEdit('username') : undefined} />
     <Row label="Email" value={profile.email} onEdit={onEdit ? () => onEdit('email') : undefined} />
     <Row
@@ -59,8 +59,22 @@ export const ProfileDetails = ({
       onEdit={onEdit ? () => onEdit('geboortedatum') : undefined}
     />
     <Row label="Location" value={profile.locatie} onEdit={onEdit ? () => onEdit('locatie') : undefined} />
-    <Row label="User ID" value={profile.id} />
   </View>
 );
+
+export const deleteProfile = ({
+  onDelete,
+}: {
+  onDelete?: () => void;
+}) => (
+  <Pressable
+    accessibilityRole="button"
+    onPress={onDelete}
+    android_ripple={{ color: '#991B1B' }}
+    className="mt-52 mx-14 items-center justify-center rounded-2xl bg-red-600 px-2 py-4 active:opacity-90"
+  >
+    <Text className="text-base font-medium text-white">Delete account</Text>
+  </Pressable>
+)
 
 export default ProfileDetails;

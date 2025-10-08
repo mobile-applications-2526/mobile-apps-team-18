@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, TextInput, Pressable, Platform } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, TextInput, Pressable, Platform, Alert } from 'react-native';
+import { router } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { userService } from '../services/userService';
 import type { Profile } from '../types';
-import ProfileDetails from '../components/ProfileDetails';
+import ProfileDetails, { deleteProfile as DeleteProfile } from '../components/ProfileDetails';
 
 const ProfileScreen = () => {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,6 +19,7 @@ const ProfileScreen = () => {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const formatDate = (d: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -99,6 +101,31 @@ const ProfileScreen = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!auth?.token) return;
+    setDeleting(true);
+    try {
+      await userService.deleteProfile(auth.token);
+      await logout();
+      router.replace('/');
+    } catch (e: any) {
+      Alert.alert('Delete failed', e?.message || 'Failed to delete account');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const confirmDelete = () => {
+    Alert.alert(
+      'Delete account',
+      'This action cannot be undone. Are you sure you want to delete your account?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: handleDelete },
+      ]
+    );
   };
 
 
@@ -199,6 +226,8 @@ const ProfileScreen = () => {
                 </View>
               </View>
             )}
+
+            <DeleteProfile onDelete={confirmDelete} />
           </View>
         )}
       </ScrollView>

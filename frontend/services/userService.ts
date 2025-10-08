@@ -96,4 +96,15 @@ export async function updateProfile(token: string, input: Partial<Profile>): Pro
   return handleJson<Profile>(res);
 }
 
-export const userService = { login, signup, getProfile, updateProfile };
+export async function deleteProfile(token: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/users/me`, {
+    method: 'DELETE',
+    headers: {
+      ...authHeader(token),
+      Accept: 'application/json',
+    },
+  });
+  return handleJson<string>(res);
+}
+
+export const userService = { login, signup, getProfile, updateProfile, deleteProfile };
