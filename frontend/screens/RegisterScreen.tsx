@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { userService } from '../services/userService';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import type { SignupInput } from '../types';
 
 type Props = {
@@ -13,11 +14,35 @@ const RegisterScreen = ({ onBack, onSuccess }: Props) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [geboortedatum, setGeboortedatum] = useState('');
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [locatie, setLocatie] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const canSubmit = !loading;
+
+  const formatDate = (d: Date) => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  };
+
+  const onChangeBirth = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      // Android returns 'set' or 'dismissed'
+      if (event.type === 'set' && selectedDate) {
+        setBirthDate(selectedDate);
+        setGeboortedatum(formatDate(selectedDate));
+      }
+      setShowDatePicker(false);
+    } else {
+      // iOS updates continuously on change
+      if (selectedDate) {
+        setBirthDate(selectedDate);
+        setGeboortedatum(formatDate(selectedDate));
+      }
+    }
+  };
 
   const handleRegister = async () => {
     if (!canSubmit) return;
@@ -58,7 +83,42 @@ const RegisterScreen = ({ onBack, onSuccess }: Props) => {
         <View className="mt-8 gap-4">
           <LabeledInput label="Username" value={username} onChangeText={setUsername} placeholder="username" className="text-white" />
           <LabeledInput label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com" autoCapitalize="none" className="text-white" />
-          <LabeledInput label="Birthdate" value={geboortedatum} onChangeText={setGeboortedatum} placeholder="YYYY-MM-DD" className="text-white" />
+          {Platform.OS === 'web' ? (
+            <LabeledInput label="Birthdate" value={geboortedatum} onChangeText={setGeboortedatum} placeholder="YYYY-MM-DD" className="text-white" />
+          ) : (
+            <View>
+              <Text className="mb-2 text-sm font-medium text-white">Birthdate</Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setShowDatePicker(true)}
+                className="rounded-2xl border border-gray-300 px-4 py-3"
+              >
+                <Text className="text-base text-white">
+                  {geboortedatum ? geboortedatum : 'YYYY-MM-DD'}
+                </Text>
+              </Pressable>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={birthDate ?? new Date(2000, 0, 1)}
+                  mode="date"
+                  display={'spinner'}
+                  onChange={onChangeBirth}
+                  maximumDate={new Date()}
+                />
+              )}
+              {Platform.OS === 'ios' && showDatePicker && (
+                <View className="mt-2 flex-row justify-end">
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => setShowDatePicker(false)}
+                    className="rounded-xl bg-emerald-600 px-4 py-2 active:opacity-90"
+                  >
+                    <Text className="text-white">Done</Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
+          )}
           <LabeledInput label="Location" value={locatie} onChangeText={setLocatie} placeholder="Your kot address" className="text-white" />
           <LabeledInput label="Password" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry className="text-white" />
         </View>
