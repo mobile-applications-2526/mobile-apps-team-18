@@ -63,7 +63,7 @@ public class UserService {
      * @param userInput the details to use for registration
      * @return the newly created User
      */
-    public User signup(UserInput userInput) {
+    public AuthenticationResponse signup(UserInput userInput) {
         if (userRepository.existsByUsername(userInput.username())) {
             throw new UserException("Username is already in use.");
         }
@@ -76,7 +76,17 @@ public class UserService {
                 userInput.locatie(),
                 hashedPassword);
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        final var token = jwtService.generateToken(user);
+        return new AuthenticationResponse(
+                "Registration successful.",
+                token,
+                user.getUsername(),
+                user.getEmail(),
+                user.getGeboortedatum(),
+                user.getLocatie());
+
     }
 
     public UserPongDTO ping(Authentication authentication) {

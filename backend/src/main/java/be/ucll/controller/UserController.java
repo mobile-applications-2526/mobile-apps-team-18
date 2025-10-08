@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public User signup(@Valid @RequestBody UserInput userInput) {
+    public AuthenticationResponse signup(@Valid @RequestBody UserInput userInput) {
         return userService.signup(userInput);
     }
 
