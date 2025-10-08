@@ -21,6 +21,13 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
+    public List<Task> getTasksByKotAddress(String kotAddress) {
+        if (kotAddress == null || kotAddress.trim().isEmpty()) {
+            throw new IllegalArgumentException("KotAddress cannot be null or empty");
+        }
+        return taskRepository.findByKotAddressContainingIgnoreCase(kotAddress.trim());
+    }
+
     public Task createTask(Task task) {
         return taskRepository.save(task);
     }

@@ -30,7 +30,12 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks() {
+    public List<Task> getTasks(@RequestParam(name = "kotAddress", required = false) String kotAddress) {
+        return taskService.getTasksByKotAddress(kotAddress);
+    }
+
+    @GetMapping("/all")
+    public List<Task> getAllTasks() {
         return taskService.getAllTasks();
     }
 

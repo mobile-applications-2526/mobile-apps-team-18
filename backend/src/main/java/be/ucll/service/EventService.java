@@ -20,6 +20,14 @@ public class EventService {
         return eventRepository.findAll();
     }
 
+    public List<Event> getEventsByKotAddress(String kotAddress) {
+        if (kotAddress == null || kotAddress.trim().isEmpty()) {
+            throw new IllegalArgumentException("KotAddress cannot be null or empty");
+        }
+        // Repository finder matches Event.kotadress
+        return eventRepository.findByKotadressContainingIgnoreCase(kotAddress.trim());
+    }
+
     public Event createEvent(Event event) {
         return eventRepository.save(event);
     }
