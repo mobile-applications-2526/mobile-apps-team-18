@@ -26,8 +26,8 @@ const LoginScreen = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await userService.login(username, password);
-      await login({ token: data.token, username: data.username });
+  const data = await userService.login(username, password);
+  await login({ token: data.token, username: data.username, plaats: data.plaats });
       router.replace("/home");
     } catch (e: any) {
       setError(e?.message || "Something went wrong");

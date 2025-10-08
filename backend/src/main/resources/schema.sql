@@ -13,25 +13,28 @@ CREATE TABLE USERS (
 
 CREATE TABLE TASKS (
     id BIGSERIAL NOT NULL,
+    title TEXT NOT NULL,
     description TEXT NOT NULL,
     task_type TEXT NOT NULL,
-    date DATE NOT NULL,
-    assigned_to_id BIGINT NOT NULL,
+    kot_address TEXT NOT NULL,
+    "date" DATE NOT NULL,
+    assigned_user_id BIGINT NOT NULL,
     created_by_id BIGINT NOT NULL,
 
     CONSTRAINT task_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_user FOREIGN KEY (assigned_to_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user FOREIGN KEY (assigned_user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_user2 FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE EVENTS (
     id BIGSERIAL NOT NULL,
-    title TEXT NOT NULL,
+    name TEXT NOT NULL,
     description TEXT NOT NULL,
-    date DATE NOT NULL,
+    kot_address TEXT NOT NULL,
+    "date" DATE NOT NULL,
     location TEXT NOT NULL,
-    created_by_id BIGINT NOT NULL,
+    organizer_id BIGINT NOT NULL,
 
     CONSTRAINT event_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_user3 FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
+    CONSTRAINT fk_user3 FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE CASCADE
 );

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import be.ucll.model.Event;
 import be.ucll.service.EventService;
@@ -25,7 +26,12 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> getEvents() {
+    public List<Event> getEvents(@RequestParam(name = "kotAddress", required = false) String kotAddress) {
+        return eventService.getEventsByKotAddress(kotAddress);
+    }
+
+    @GetMapping("/all")
+    public List<Event> getAllEvents() {
         return eventService.getAllEvents();
     }
 

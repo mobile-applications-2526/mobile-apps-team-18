@@ -27,15 +27,17 @@ export type SignupUser = {
 export type Event = {
   id: number;
   name: string;
-  eventDate: string;
+  date: string;
   location?: string;
   description?: string;
+  kotAddress?: string;
 };
 
 export type Task = {
   id: number;
   name: string;
-  dueDate: string;
+  date: string;
   assignedUser?: User;
   description?: string;
+  kotAddress?: string;
 };

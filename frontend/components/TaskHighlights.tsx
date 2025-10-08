@@ -14,7 +14,7 @@ export const TaskHighlights = ({ tasks }: Props) => {
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   })();
 
-  const upcoming = tasks ? tasks?.filter((t) => t.dueDate >= todayStr).sort((a, b) => a.dueDate.localeCompare(b.dueDate)) : [];
+  const upcoming = tasks ? tasks?.filter((t) => t.date >= todayStr).sort((a, b) => a.date.localeCompare(b.date)) : [];
 
   const upcomingCount = upcoming.length;
   const next = upcoming[0];
@@ -24,7 +24,7 @@ export const TaskHighlights = ({ tasks }: Props) => {
       <Text className="text-emerald-600">Tasks</Text>
       <Text className="mt-1 text-2xl font-bold text-emerald-800">{upcomingCount} upcoming</Text>
       <Text className="mt-1 text-emerald-700">
-        {next ? `Next: ${next.name} • ${next.dueDate}` : "No upcoming tasks"}
+        {next ? `Next: ${next.name} • ${next.date}` : "No upcoming tasks"}
       </Text>
     </View>
   );

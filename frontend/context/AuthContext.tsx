@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 type AuthData = {
   token: string;
   username?: string;
+  plaats?: string;
 };
 
 type AuthContextType = {
@@ -29,8 +30,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const token = await SecureStore.getItemAsync('authToken');
       const username = await SecureStore.getItemAsync('authUsername');
+      const plaats = await SecureStore.getItemAsync('authPlaats');
       if (token) {
-        setAuth({ token, username: username || undefined });
+        setAuth({ token, username: username || undefined, plaats: plaats || undefined });
       }
     } catch (error) {
       console.error('Failed to load auth:', error);
@@ -45,6 +47,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.username) {
         await SecureStore.setItemAsync('authUsername', data.username);
       }
+      if (data.plaats) {
+        await SecureStore.setItemAsync('authPlaats', data.plaats);
+      }
       setAuth(data);
     } catch (error) {
       console.error('Failed to save auth:', error);
@@ -56,6 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await SecureStore.deleteItemAsync('authToken');
       await SecureStore.deleteItemAsync('authUsername');
+      await SecureStore.deleteItemAsync('authPlaats');
       setAuth(null);
     } catch (error) {
       console.error('Failed to clear auth:', error);

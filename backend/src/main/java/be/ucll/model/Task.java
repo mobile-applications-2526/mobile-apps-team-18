@@ -3,6 +3,7 @@ package be.ucll.model;
 import java.time.LocalDate;
 
 import be.ucll.types.TaskType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,16 +29,21 @@ public class Task {
     @NotBlank(message = "Description should not be empty")
     private String description;
 
+    @Column(name = "task_type")
     @NotNull(message = "Type should not be empty")
     private TaskType type;
 
     @NotNull(message = "Due date should not be null")
     @FutureOrPresent(message = "Due date must be in the present or future")
-    private LocalDate dueDate;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "assigned_user_id")
     private User assignedUser;
+
+    @Column(name = "kot_address")
+    @NotNull(message = "KotAddress may not be empty")
+    private String kotAddress;
 
     @ManyToOne
     @JoinColumn(name = "createdBy_id")
@@ -45,11 +51,13 @@ public class Task {
 
     protected Task() {}
 
-    public Task(String title, String description, TaskType type, LocalDate dueDate) {
+    public Task(String title, String description, TaskType type, LocalDate date, User createdBy) {
         setTitle(title);
         setDescription(description);
         setType(type);
-        setDueDate(dueDate);
+        setDate(date);
+        setKotAddress(createdBy.getLocatie());
+        setCreatedBy(createdBy);
     }
 
     public Long getId() {
@@ -84,12 +92,12 @@ public class Task {
         this.type = type;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public User getAssignedUser() {
@@ -106,5 +114,13 @@ public class Task {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getKotAddress() {
+        return kotAddress;
+    }
+
+    public void setKotAddress(String kotAddress) {
+        this.kotAddress = kotAddress;
     }
 }
