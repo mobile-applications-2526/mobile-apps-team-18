@@ -1,5 +1,7 @@
 import React from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
+import { EventHighlights } from '../components/EventHighlights';
+import { TaskHighlights } from '../components/TaskHighlights';
 
 type Props = {
   onLogout?: () => void;
@@ -29,16 +31,8 @@ export const HomeScreen = ({ onLogout }: Props) => {
       {/* Highlights */}
       <View className="mt-6 px-6">
         <View className="flex-row gap-4">
-          <View className="flex-1 rounded-2xl bg-emerald-50 p-4">
-            <Text className="text-emerald-600">Tasks</Text>
-            <Text className="mt-1 text-2xl font-bold text-emerald-800">3 due</Text>
-            <Text className="mt-1 text-emerald-700">Next: Take out trash</Text>
-          </View>
-          <View className="flex-1 rounded-2xl bg-indigo-50 p-4">
-            <Text className="text-indigo-600">Events</Text>
-            <Text className="mt-1 text-2xl font-bold text-indigo-800">1 upcoming</Text>
-            <Text className="mt-1 text-indigo-700">House dinner, Fri 19:00</Text>
-          </View>
+        <EventHighlights />
+        <TaskHighlights />
         </View>
       </View>
 

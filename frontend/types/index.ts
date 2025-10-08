@@ -7,20 +7,34 @@ export type User = {
   plaats: string;
 };
 
-// Signup input expected by backend /users/signup
 export type SignupInput = {
   username: string;
   email: string;
-  geboortedatum: string; // ISO date YYYY-MM-DD
+  geboortedatum: string;
   locatie: string;
   password: string;
 };
 
-// Backend returns the created user entity (without token)
 export type SignupUser = {
   id: number;
   username: string;
   email: string;
-  geboortedatum: string; // ISO date
+  geboortedatum: string;
   locatie: string;
+};
+
+export type Event = {
+  id: number;
+  name: string;
+  eventDate: string;
+  location?: string;
+  description?: string;
+};
+
+export type Task = {
+  id: number;
+  name: string;
+  dueDate: string;
+  assignedUser?: User;
+  description?: string;
 };

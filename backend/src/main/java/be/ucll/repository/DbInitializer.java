@@ -39,6 +39,13 @@ public class DbInitializer {
             LocalDate.of(2004, 2, 2),
             "Leuven", // locatie
             passwordEncoder.encode("rajo123")));
+
+        userRepository.save(new User(
+            "sandercoemans",
+            "sander@ucll.be",
+            LocalDate.of(2004, 2, 6),   
+            "Leuven",
+            passwordEncoder.encode("Sander123!")));
     }
 
 }
