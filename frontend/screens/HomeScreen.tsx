@@ -7,6 +7,8 @@ import { Pill } from "../components/Pill";
 import { UpcomingItem } from "../components/UpcomingItem";
 import { Divider } from "../components/Divider";
 import { QuickAction } from "../components/QuickAction";
+import { EventHighlights } from "../components/EventHighlights";
+import { TaskHighlights } from "../components/TaskHighlights";
 
 export const HomeScreen = () => {
   const { logout, auth } = useAuth();
