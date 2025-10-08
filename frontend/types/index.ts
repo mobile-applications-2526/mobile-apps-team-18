@@ -16,6 +16,7 @@ export type SignupInput = {
 };
 
 export type SignupUser = {
+  token: any;
   id: number;
   username: string;
   email: string;
