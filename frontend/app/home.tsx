@@ -1,7 +1,11 @@
 import React from 'react';
 import { Redirect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeRedirect() {
-  // Redirect legacy /home route into the tabbed home so the bottom tabs show up
-  return <Redirect href="/(tabs)/home" />;
+  return (
+    <SafeAreaView>
+      <Redirect href="/(tabs)/home" />
+    </SafeAreaView>
+  );
 }
