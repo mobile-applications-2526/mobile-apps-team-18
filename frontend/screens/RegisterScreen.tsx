@@ -32,6 +32,8 @@ const RegisterScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [inputFocused, setInputFocused] = useState(false);
+
   const canSubmitStep1 = username.trim().length > 0 && email.trim().length > 0;
   const canSubmitStep2 = geboortedatum.length > 0 && locatie.trim().length > 0;
   const canSubmitStep3 = password.length > 0;
@@ -82,14 +84,16 @@ const RegisterScreen = () => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View className="flex-1 justify-between bg-gray-900 px-6 py-8">
           {/* Hero image */}
-          <View className="flex-1 items-center justify-center">
-            <Image
-              source={require('../assets/hero-picture.png')}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="contain"
-              accessibilityLabel="KotConnect logo"
-            />
-          </View>
+          {!inputFocused && (
+            <View className="flex-1 items-center justify-center">
+              <Image
+                source={require('../assets/hero-picture.png')}
+                style={{ width: '100%', height: '100%' }}
+                resizeMode="contain"
+                accessibilityLabel="KotConnect logo"
+              />
+            </View>
+          )}
 
           {/* Form Steps */}
           <View>
@@ -113,6 +117,8 @@ const RegisterScreen = () => {
                   onChangeText={setUsername}
                   placeholder="Enter username"
                   className="mb-4"
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                 />
                 <CustomInput
                   label="Email"
@@ -121,6 +127,8 @@ const RegisterScreen = () => {
                   placeholder="you@example.com"
                   keyboardType="email-address"
                   className="mb-6"
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                 />
                 <Pressable
                   disabled={!canSubmitStep1}
@@ -157,6 +165,8 @@ const RegisterScreen = () => {
                   onChangeText={setLocatie}
                   placeholder="Your kot address"
                   className="mb-6"
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                 />
                 <View className="mt-4 flex-row justify-between">
                   <Pressable
@@ -186,6 +196,8 @@ const RegisterScreen = () => {
                   placeholder="Password"
                   secureTextEntry
                   className="mb-6"
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                 />
                 {error && <Text className="mb-4 text-center text-sm text-red-600">{error}</Text>}
                 <View className="mt-4 flex-row justify-between">

@@ -1,10 +1,10 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import HomeScreen from "../screens/HomeScreen";
+import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import HomeScreen from '../screens/HomeScreen';
 
 export default function index() {
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-gray-900">
       <HomeScreen />
     </SafeAreaView>
   );

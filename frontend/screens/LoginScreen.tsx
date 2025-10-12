@@ -24,6 +24,8 @@ const LoginScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
+  const [inputFocused, setInputFocused] = useState(false);
+
   const canSubmit = username.trim().length > 0 && password.length >= 1 && !loading;
 
   const handleLogin = async () => {
@@ -49,12 +51,16 @@ const LoginScreen = () => {
         <View className="flex-1 justify-between px-6 py-8">
           {/* Hero image at the top */}
           <View className="flex-1 items-center justify-center">
-            <Image
-              source={require('../assets/hero-picture.png')}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="contain"
-              accessibilityLabel="KotConnect logo"
-            />
+            {!inputFocused && (
+              <View className="flex-1 items-center justify-center">
+                <Image
+                  source={require('../assets/hero-picture.png')}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode="contain"
+                  accessibilityLabel="KotConnect logo"
+                />
+              </View>
+            )}
           </View>
 
           {/* Inputs + Buttons at the bottom */}
@@ -84,6 +90,8 @@ const LoginScreen = () => {
                   placeholder="Enter your username"
                   placeholderTextColor="#9CA3AF"
                   className="rounded-2xl border border-gray-700 bg-gray-800 px-4 py-3 text-base text-white"
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                 />
               </View>
 
@@ -97,6 +105,8 @@ const LoginScreen = () => {
                     placeholder="Password"
                     placeholderTextColor="#9CA3AF"
                     className="rounded-2xl border border-gray-700 bg-gray-800 px-4 py-3 pr-12 text-base text-white"
+                    onFocus={() => setInputFocused(true)}
+                    onBlur={() => setInputFocused(false)}
                   />
                   <Pressable
                     onPress={() => setShowPassword((prev) => !prev)}
