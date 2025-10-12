@@ -1,12 +1,18 @@
-import React from 'react';
-import { ScrollView, View, Text, Pressable } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { router } from 'expo-router';
-import { Card } from '../components/Card';
-import { Pill } from '../components/Pill';
-import { UpcomingItem } from '../components/UpcomingItem';
-import { Divider } from '../components/Divider';
-import { QuickAction } from '../components/QuickAction';
+import React from "react";
+import { ScrollView, View, Text, Pressable } from "react-native";
+import { useAuth } from "../context/AuthContext";
+import { router } from "expo-router";
+import { Card } from "../components/Card";
+import { Pill } from "../components/Pill";
+import { UpcomingItem } from "../components/UpcomingItem";
+import { Divider } from "../components/Divider";
+import { QuickAction } from "../components/QuickAction";
+import { EventHighlights } from "../components/EventHighlights";
+import { TaskHighlights } from "../components/TaskHighlights";
+import useSWR from 'swr';
+import { taskService } from "../services/taskService";
+import { eventService } from "../services/eventService";
+import { Task, Event } from "../types";
 
 export const HomeScreen = () => {
   const { logout, auth } = useAuth();
@@ -15,6 +21,19 @@ export const HomeScreen = () => {
     await logout();
     router.replace('/login');
   };
+  
+  const fetcher = async () => {;  
+
+        if (!auth?.token) {
+            return;
+        }
+        
+        const events = await eventService.getEvents(auth.plaats!);
+        const tasks = await taskService.getTasks(auth.plaats!);
+        return { events, tasks };
+    };
+
+    const {data, isLoading, error} =useSWR(auth?.token! ? 'homeData' : null, fetcher, { revalidateOnFocus: false });
 
   if (!auth) {
     return (
@@ -46,16 +65,8 @@ export const HomeScreen = () => {
       {/* Highlights */}
       <View className="mt-6 px-6">
         <View className="flex-row gap-4">
-          <View className="flex-1 rounded-2xl bg-emerald-50 p-4">
-            <Text className="text-emerald-600">Tasks</Text>
-            <Text className="mt-1 text-2xl font-bold text-emerald-800">3 due</Text>
-            <Text className="mt-1 text-emerald-700">Next: Take out trash</Text>
-          </View>
-          <View className="flex-1 rounded-2xl bg-indigo-50 p-4">
-            <Text className="text-indigo-600">Events</Text>
-            <Text className="mt-1 text-2xl font-bold text-indigo-800">1 upcoming</Text>
-            <Text className="mt-1 text-indigo-700">House dinner, Fri 19:00</Text>
-          </View>
+        <EventHighlights events={data?.events || []} />
+        <TaskHighlights tasks={data?.tasks || []} />
         </View>
       </View>
 
@@ -90,17 +101,27 @@ export const HomeScreen = () => {
       {/* Upcoming section */}
       <View className="mt-6 px-6">
         <Text className="mb-3 text-base font-semibold text-gray-900">Upcoming</Text>
-        <Card>
-          <UpcomingItem title="Clean kitchen" subtitle="Due today • Assigned to You" badge="Task" />
-          <Divider />
-          <UpcomingItem
-            title="Buy groceries"
-            subtitle="Due tomorrow • Assigned to Alex"
-            badge="Task"
-          />
-          <Divider />
-          <UpcomingItem title="Movie night" subtitle="Fri 20:00 • Living room" badge="Event" />
-        </Card>
+        {/* <Card>
+          {(loadingTasks || loadingEvents) && (
+            <Text className="text-gray-600">Loading your upcoming items…</Text>
+          )}
+          {(tasksError || eventsError) && (
+            <Text className="text-red-600">Failed to load data.</Text>
+          )}
+          {!loadingTasks && !loadingEvents && !tasksError && !eventsError && (
+            <>
+              <UpcomingItem title="Clean kitchen" subtitle="Due today • Assigned to You" badge="Task" />
+              <Divider />
+              <UpcomingItem
+                title="Buy groceries"
+                subtitle="Due tomorrow • Assigned to Alex"
+                badge="Task"
+              />
+              <Divider />
+              <UpcomingItem title="Movie night" subtitle="Fri 20:00 • Living room" badge="Event" />
+            </>
+          )}
+        </Card> */}
       </View>
 
       {/* Household */}

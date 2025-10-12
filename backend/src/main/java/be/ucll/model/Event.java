@@ -2,6 +2,7 @@ package be.ucll.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +33,11 @@ public class Event {
 
     @NotNull(message = "Event date should not be empty")
     @FutureOrPresent(message = "Event date must be in the present or future")
-    private LocalDate eventDate;
+    private LocalDate date;
+
+    @Column(name = "kot_address")
+    @NotNull(message = "Kotadress may not be empty")
+    private String kotadress;
 
     @ManyToOne
     @JoinColumn(name = "organizer_id")
@@ -40,11 +45,13 @@ public class Event {
 
     protected Event() {}
 
-    public Event(String name, String description, String location, LocalDate eventDate) {
+    public Event(String name, String description, String location, LocalDate date, User organizer) {
         setName(name);
         setDescription(description);
         setLocation(location);
-        setEventDate(eventDate);
+        setDate(date);
+        setKotAddress(organizer.getLocatie());
+        setOrganizer(organizer);
     }
 
     public Long getId() {
@@ -79,12 +86,12 @@ public class Event {
         this.location = location;
     }
 
-    public LocalDate getEventDate() {
-        return eventDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setEventDate(LocalDate eventDate) {
-        this.eventDate = eventDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public User getOrganizer() {
@@ -93,5 +100,13 @@ public class Event {
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
+    }
+
+    public String getKotAddress() {
+        return kotadress;
+    }
+    
+    public void setKotAddress(String kotadress) {
+        this.kotadress = kotadress;
     }
 }

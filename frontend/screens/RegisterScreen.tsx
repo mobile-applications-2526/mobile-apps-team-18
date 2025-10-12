@@ -66,7 +66,7 @@ const RegisterScreen = () => {
       const data = await userService.signup(input);
       if (data.token) {
         await login({ token: data.token, username: data.username });
-        router.replace('/home');
+        router.replace('/(tabs)/home');
       } else {
         router.replace('/login');
       }
