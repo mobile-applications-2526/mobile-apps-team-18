@@ -34,8 +34,8 @@ const LoginScreen = () => {
     setError(null);
     try {
       const data = await userService.login(username, password);
-  await login({ token: data.token, username: data.username });
-  router.replace("/(tabs)/home");
+      await login({ token: data.token, username: data.username });
+      router.replace('/(tabs)/home');
     } catch (e: any) {
       setError(e?.message || 'Something went wrong');
     } finally {
@@ -50,18 +50,16 @@ const LoginScreen = () => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View className="flex-1 justify-between px-6 py-8">
           {/* Hero image at the top */}
-          <View className="flex-1 items-center justify-center">
-            {!inputFocused && (
-              <View className="flex-1 items-center justify-center">
-                <Image
-                  source={require('../assets/hero-picture.png')}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode="contain"
-                  accessibilityLabel="KotConnect logo"
-                />
-              </View>
-            )}
-          </View>
+          {!inputFocused && (
+            <View className="flex-1 items-center justify-center">
+              <Image
+                source={require('../assets/hero-picture.png')}
+                style={{ width: '100%', height: '100%' }}
+                resizeMode="contain"
+                accessibilityLabel="KotConnect logo"
+              />
+            </View>
+          )}
 
           {/* Inputs + Buttons at the bottom */}
           <View>

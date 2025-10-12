@@ -101,7 +101,7 @@ const RegisterScreen = () => {
             <View className="relative mb-6 flex-row items-center gap-4">
               <Pressable
                 accessibilityRole="button"
-                onPress={() => router.push('/')}
+                onPress={() => router.push('/login')}
                 className="rounded-xl border border-gray-600 px-2 py-1">
                 <ArrowLeft color="#9CA3AF" size={24} />
               </Pressable>
