@@ -16,11 +16,10 @@ export const HomeScreen = () => {
 
   const fetcher = async () => {
     if (!auth?.token) {
-      return;
+      return { events: [], tasks: [] };
     }
 
-    const events = await eventService.getEvents(auth.plaats!);
-    const tasks = await taskService.getTasks(auth.plaats!);
+    const [events, tasks] = await Promise.all([eventService.getEvents(auth.token), taskService.getTasks(auth.token)]);
     return { events, tasks };
   };
 

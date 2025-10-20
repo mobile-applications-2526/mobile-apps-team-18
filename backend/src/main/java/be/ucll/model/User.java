@@ -1,10 +1,16 @@
 package be.ucll.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +38,10 @@ public class User {
 
     @NotBlank(message = "Password should not be empty")
     private String password;
+
+    @ManyToMany
+    @JoinTable(name = "user_dorms", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "dorm_id"))
+    private List<Dorm> dorms = new ArrayList<>();
 
     protected User() {
     }
