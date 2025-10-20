@@ -4,7 +4,7 @@ import HomeScreen from '../../screens/HomeScreen';
 
 export default function HomeRoute() {
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-gray-900">
       <HomeScreen />
     </SafeAreaView>
   );
