@@ -18,7 +18,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/events")
 public class EventController {
-    
+
     private final EventService eventService;
 
     public EventController(EventService eventService) {
@@ -26,8 +26,8 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> getEvents(@RequestParam(name = "kotAddress", required = false) String kotAddress) {
-        return eventService.getEventsByKotAddress(kotAddress);
+    public List<Event> getEvents(@RequestParam Long dormId) {
+        return eventService.getEventsByDormId(dormId);
     }
 
     @GetMapping("/all")

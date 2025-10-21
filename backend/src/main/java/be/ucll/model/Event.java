@@ -2,6 +2,8 @@ package be.ucll.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +19,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "events")
 public class Event {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,22 +37,23 @@ public class Event {
     @FutureOrPresent(message = "Event date must be in the present or future")
     private LocalDate date;
 
-    @Column(name = "kot_address")
-    @NotNull(message = "Kotadress may not be empty")
-    private String kotadress;
-
     @ManyToOne
     @JoinColumn(name = "organizer_id")
     private User organizer;
 
-    protected Event() {}
+    @ManyToOne
+    @JoinColumn(name = "dorm_id")
+    @JsonBackReference
+    private Dorm dorm;
+
+    protected Event() {
+    }
 
     public Event(String name, String description, String location, LocalDate date, User organizer) {
         setName(name);
         setDescription(description);
         setLocation(location);
         setDate(date);
-        setKotAddress(organizer.getLocatie());
         setOrganizer(organizer);
     }
 
@@ -102,11 +105,12 @@ public class Event {
         this.organizer = organizer;
     }
 
-    public String getKotAddress() {
-        return kotadress;
+    public Dorm getDorm() {
+        return dorm;
     }
-    
-    public void setKotAddress(String kotadress) {
-        this.kotadress = kotadress;
+
+    public void setDorm(Dorm dorm) {
+        this.dorm = dorm;
     }
+
 }

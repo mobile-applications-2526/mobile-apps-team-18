@@ -1,9 +1,0 @@
-spring:
-  profiles:
-    active: dev
-  datasource:
-    url: jdbc:h2:mem:kotconnect
-    username: kotconnect
-    password: kotconnect123
-jwt:
-  secret-key: d2ViNC1ub3Qtc28tc2VjcmV0LWFjY2Vzcy1zZWNyZXQ=

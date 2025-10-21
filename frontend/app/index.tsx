@@ -1,5 +1,5 @@
 import React from "react";
-import WelcomeScreen from "../screens/WelcomeScreen";
+import WelcomeScreen from "../screens/auth/WelcomeScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function index() {

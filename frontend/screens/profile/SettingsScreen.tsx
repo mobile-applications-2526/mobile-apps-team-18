@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { userService } from '../services/userService';
-import type { Profile } from '../types';
+import { useAuth } from '../../context/AuthContext';
+import { userService } from '../../services/userService';
+import type { Profile } from '../../types';
 import { Bell, Palette, FileText, LogOut, ChevronRight, User } from 'lucide-react-native';
 import { router } from 'expo-router';
-import SectionHeader from '../components/SectionHeader';
-import SettingsItem from '../components/SettingsItem';
+import SectionHeader from '../../components/SectionHeader';
+import SettingsItem from '../../components/SettingsItem';
 
 const SettingsScreen = () => {
   const { auth, logout } = useAuth();
@@ -50,7 +50,7 @@ const SettingsScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerClassName="px-5 pb-8 pt-4" showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
       {/* Header */}
       <Text className="mb-6 text-3xl font-bold text-white">Settings</Text>
 

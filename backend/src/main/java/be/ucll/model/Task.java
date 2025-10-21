@@ -2,6 +2,8 @@ package be.ucll.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import be.ucll.types.TaskType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +20,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "tasks")
 public class Task {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,22 +43,23 @@ public class Task {
     @JoinColumn(name = "assigned_user_id")
     private User assignedUser;
 
-    @Column(name = "kot_address")
-    @NotNull(message = "KotAddress may not be empty")
-    private String kotAddress;
-
     @ManyToOne
     @JoinColumn(name = "createdBy_id")
     private User createdBy;
 
-    protected Task() {}
+    @ManyToOne
+    @JoinColumn(name = "dorm_id")
+    @JsonBackReference
+    private Dorm dorm;
+
+    protected Task() {
+    }
 
     public Task(String title, String description, TaskType type, LocalDate date, User createdBy) {
         setTitle(title);
         setDescription(description);
         setType(type);
         setDate(date);
-        setKotAddress(createdBy.getLocatie());
         setCreatedBy(createdBy);
     }
 
@@ -116,11 +119,12 @@ public class Task {
         this.createdBy = createdBy;
     }
 
-    public String getKotAddress() {
-        return kotAddress;
+    public Dorm getDorm() {
+        return dorm;
     }
 
-    public void setKotAddress(String kotAddress) {
-        this.kotAddress = kotAddress;
+    public void setDorm(Dorm dorm) {
+        this.dorm = dorm;
     }
+
 }

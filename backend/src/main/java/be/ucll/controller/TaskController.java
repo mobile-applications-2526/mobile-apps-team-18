@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-    
+
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
@@ -30,8 +28,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks(@RequestParam(name = "kotAddress", required = false) String kotAddress) {
-        return taskService.getTasksByKotAddress(kotAddress);
+    public List<Task> getTasks(@RequestParam Long dormId) {
+        return taskService.getTasksByDormId(dormId);
     }
 
     @GetMapping("/all")
@@ -53,5 +51,5 @@ public class TaskController {
     public List<Task> getTaskByType(@RequestParam TaskType type) {
         return taskService.getTaskByType(type);
     }
-    
+
 }

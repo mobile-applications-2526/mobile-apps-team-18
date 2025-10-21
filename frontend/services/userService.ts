@@ -1,13 +1,13 @@
-import { Profile, SignupInput, SignupUser, User } from '../types';
+import { AuthenticationResponse, Profile, SignupInput, SignupUser, User } from '../types';
 import { API_BASE, handleJson } from './apiClient';
 
-export async function login(username: string, password: string): Promise<User> {
+export async function login(username: string, password: string): Promise<AuthenticationResponse> {
   const res = await fetch(`${API_BASE}/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ username, password }),
   });
-  const data = await handleJson<User>(res);
+  const data = await handleJson<AuthenticationResponse>(res);
   if (!data?.token) {
     throw new Error('No token returned from server');
   }

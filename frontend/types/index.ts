@@ -1,10 +1,18 @@
-export type User = {
+export type AuthenticationResponse = {
   message: string;
   token: string;
   username: string;
   email: string;
   geboortedatum: string;
   plaats: string;
+};
+
+export type User = {
+  id: number;
+  username: string;
+  email: string;
+  geboortedatum: string;
+  locatie: string;
 };
 
 export type SignupInput = {
@@ -39,13 +47,34 @@ export type Event = {
   location?: string;
   description?: string;
   kotAddress?: string;
+  organizer: User;
 };
 
 export type Task = {
   id: number;
   title: string;
   date: string;
+  type: TaskType;
   assignedUser?: User;
   description?: string;
   kotAddress?: string;
 };
+
+export type Dorm = {
+  id: number;
+  name: string;
+  code: string;
+  users: User[];
+  tasks: Task[];
+  events: Event[];
+};
+
+export enum TaskType {
+  CLEANING,
+  TRASH,
+  DISHES,
+  BATHROOM,
+  KITCHEN,
+  COOKING,
+  GROCERIES,
+}

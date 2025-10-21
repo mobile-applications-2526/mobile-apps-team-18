@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import TermsPrivacyScreen from '../screens/TermsPrivacyScreen';
+import TermsPrivacyScreen from '../screens/profile/TermsPrivacyScreen';
 
 export default function terms() {
   return (

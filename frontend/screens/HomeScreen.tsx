@@ -1,141 +1,248 @@
-import { ScrollView, View, Text, Pressable } from 'react-native';
+'use client';
+
+import { View, Text, Pressable, TextInput, Alert, ScrollView } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { router } from 'expo-router';
-import useSWR from 'swr';
-import { taskService } from '../services/taskService';
-import { eventService } from '../services/eventService';
+import useSWR, { mutate } from 'swr';
+import { useState, useMemo } from 'react';
+import DormService from '../services/DormService';
+import type { Dorm } from '../types';
+import SectionHeader from '../components/SectionHeader';
 import React from 'react';
 
 export const HomeScreen = () => {
-  const { logout, auth } = useAuth();
+  const { logout, auth, isLoading } = useAuth();
+  const [code, setCode] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const handleLogout = async () => {
     await logout();
     router.replace('/login');
   };
 
-  const fetcher = async () => {
-    if (!auth?.token) {
-      return { events: [], tasks: [] };
-    }
-
-    const [events, tasks] = await Promise.all([eventService.getEvents(auth.token), taskService.getTasks(auth.token)]);
-    return { events, tasks };
+  const fetcher = async (): Promise<Dorm> => {
+    if (!auth?.token) throw new Error('No auth token');
+    return await DormService.getDorm(auth.token);
   };
 
-  const { data, isLoading, error } = useSWR(auth?.token! ? 'homeData' : null, fetcher, {
+  const {
+    data: dorm,
+    isLoading: dataLoading,
+    error,
+  } = useSWR(auth?.token ? 'homeData' : null, fetcher, {
     revalidateOnFocus: false,
   });
 
+  const handleJoinDorm = async () => {
+    if (!code || !code.trim()) {
+      Alert.alert('Missing Code', 'Please enter a dorm code before joining.');
+      return;
+    }
+
+    const response = await DormService.addUserToDormByCode(auth?.token as string, code);
+
+    if (response) {
+      setCode('');
+      mutate('homeData');
+    }
+  };
+
+  const weekDates = useMemo(() => {
+    const dates = [];
+    const today = new Date();
+    const currentDay = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  }, []);
+
+  const monthYear = useMemo(() => {
+    const months = [
+      'Januari',
+      'Februari',
+      'Maart',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Augustus',
+      'September',
+      'Oktober',
+      'November',
+      'December',
+    ];
+    return `${months[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
+  }, [selectedDate]);
+
+  const selectedDayLabel = useMemo(() => {
+    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    const months = [
+      'januari',
+      'februari',
+      'maart',
+      'april',
+      'mei',
+      'juni',
+      'juli',
+      'augustus',
+      'september',
+      'oktober',
+      'november',
+      'december',
+    ];
+    return `${days[selectedDate.getDay()]} ${selectedDate.getDate()} ${months[selectedDate.getMonth()]}`;
+  }, [selectedDate]);
+
+  const selectedDateString = useMemo(() => {
+    return selectedDate.toISOString().split('T')[0];
+  }, [selectedDate]);
+
+  const filteredTasks = useMemo(() => {
+    if (!dorm?.tasks) return [];
+    return dorm.tasks.filter((task) => task.date.startsWith(selectedDateString));
+  }, [dorm?.tasks, selectedDateString]);
+
+  const filteredEvents = useMemo(() => {
+    if (!dorm?.events) return [];
+    return dorm.events.filter((event) => event.date.startsWith(selectedDateString));
+  }, [dorm?.events, selectedDateString]);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <View className="h-12 w-12 rounded-full border-4 border-gray-700 border-t-emerald-500" />
+        <Text className="mt-4 text-gray-400">Loading...</Text>
+      </View>
+    );
+  }
+
   if (!auth) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-900">
+      <View className="flex-1 items-center justify-center">
         <Text className="font-bold text-red-500">Please login to access this page.</Text>
       </View>
     );
   }
 
+  if (error || !dorm) {
+    return (
+      <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
+        <Text className="mb-6 text-3xl font-bold text-white">Homepage</Text>
+
+        <View className="rounded-3xl border border-gray-700 bg-gray-800 p-6">
+          <View className="items-center">
+            <View className="mb-4 h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600">
+              <Text className="text-3xl">🏠</Text>
+            </View>
+            <Text className="mb-2 text-center text-xl font-bold text-white">
+              You don't have a dorm yet
+            </Text>
+            <Text className="mb-6 text-center text-sm text-gray-400">
+              Enter your dorm code to get started
+            </Text>
+
+            <TextInput
+              placeholder="Enter dorm code"
+              placeholderTextColor="#6B7280"
+              className="mb-4 w-full rounded-2xl border border-gray-700 bg-gray-900 px-4 py-3 text-white"
+              value={code}
+              onChangeText={setCode}
+              autoCapitalize="characters"
+            />
+
+            <Pressable
+              onPress={handleJoinDorm}
+              className="w-full rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
+              accessibilityRole="button"
+              accessibilityLabel="Join dorm">
+              <Text className="text-center font-semibold text-white">Join Dorm</Text>
+            </Pressable>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }
+
   return (
-    <ScrollView contentContainerClassName="pb-8" showsVerticalScrollIndicator={false}>
-      {/* Header */}
-      <View className="px-6 pt-6">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-3xl font-extrabold text-white">KotConnect</Text>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Log out"
-            onPress={handleLogout}
-            className="rounded-full border border-red-900/50 bg-gray-800 px-3 py-1 active:opacity-80">
-            <Text className="text-sm font-semibold text-red-500">Log out</Text>
-          </Pressable>
+    <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
+      <View className="mb-6 flex-row items-center justify-between">
+        <Text className="text-3xl font-bold text-white">{dorm.name}</Text>
+        <Pressable
+          onPress={handleLogout}
+          className="rounded-xl border border-gray-700 bg-gray-800 px-4 py-2 active:opacity-70"
+          accessibilityRole="button"
+          accessibilityLabel="Logout">
+          <Text className="text-sm font-medium text-gray-300">Logout</Text>
+        </Pressable>
+      </View>
+
+      <View className="mb-4 rounded-3xl border border-gray-700 bg-gray-800 p-5">
+        <Text className="mb-4 text-center text-xl font-semibold text-white">{monthYear}</Text>
+
+        <View className="flex-row justify-between">
+          {['M', 'D', 'W', 'D', 'V', 'Z', 'Z'].map((day, index) => (
+            <View key={index} className="items-center" style={{ width: 40 }}>
+              <Text className="mb-3 text-xs font-medium text-gray-500">{day}</Text>
+              <Pressable
+                onPress={() => setSelectedDate(weekDates[index])}
+                className={`h-10 w-10 items-center justify-center rounded-full ${
+                  selectedDate.toDateString() === weekDates[index].toDateString()
+                    ? 'bg-white'
+                    : 'bg-transparent'
+                }`}>
+                <Text
+                  className={`text-sm font-semibold ${
+                    selectedDate.toDateString() === weekDates[index].toDateString()
+                      ? 'text-gray-950'
+                      : 'text-gray-300'
+                  }`}>
+                  {weekDates[index].getDate()}
+                </Text>
+              </Pressable>
+            </View>
+          ))}
         </View>
       </View>
 
-      {/* Highlights */}
-      <View className="mt-6 px-6">
-        <View className="flex-row gap-4">
-          {/* Event Highlights */}
-          <View className="flex-1 rounded-3xl border border-gray-700 bg-gray-800 p-4">
-            <Text className="text-sm font-medium text-gray-400">Events</Text>
-            <Text className="mt-1 text-2xl font-bold text-white">
-              {isLoading ? '...' : data?.events?.length || 0}
+      <View className="rounded-3xl border border-gray-700 bg-gray-800 px-5">
+        <SectionHeader title={selectedDayLabel} />
+
+        {filteredTasks.length === 0 && filteredEvents.length === 0 ? (
+          <View className="py-8">
+            <Text className="text-center text-sm text-gray-500">
+              Geen taken of evenementen voor deze dag
             </Text>
-            <Text className="mt-1 text-xs text-gray-500">upcoming</Text>
           </View>
-
-          {/* Task Highlights */}
-          <View className="flex-1 rounded-3xl border border-gray-700 bg-gray-800 p-4">
-            <Text className="text-sm font-medium text-gray-400">Tasks</Text>
-            <Text className="mt-1 text-2xl font-bold text-white">
-              {isLoading ? '...' : data?.tasks?.length || 0}
-            </Text>
-            <Text className="mt-1 text-xs text-gray-500">pending</Text>
+        ) : (
+          <View className="pb-5">
+            {filteredTasks.map((task, index) => (
+              <View key={task.id}>
+                {index > 0 && <View className="h-px bg-gray-700" />}
+                <View className="py-4">
+                  <Text className="text-base font-semibold text-white">{task.title}</Text>
+                  <Text className="mt-1 text-sm text-gray-400">{task.assignedUser?.username}</Text>
+                </View>
+              </View>
+            ))}
+            {filteredEvents.map((event, index) => (
+              <View key={event.id}>
+                {(index > 0 || filteredTasks.length > 0) && <View className="h-px bg-gray-700" />}
+                <View className="py-4">
+                  <Text className="text-base font-semibold text-white">{event.name}</Text>
+                  <Text className="mt-1 text-sm text-gray-400">
+                    {event.organizer.username} • {event.location}
+                  </Text>
+                </View>
+              </View>
+            ))}
           </View>
-        </View>
-      </View>
-
-      {/* Quick actions */}
-      <View className="mt-6 px-6">
-        <Text className="mb-3 text-base font-semibold text-white">Quick actions</Text>
-        <View className="flex-row gap-3">
-          {/* New Task */}
-          <Pressable
-            onPress={() => {
-              /* TODO: tasks */
-            }}
-            className="flex-1 items-center rounded-3xl border border-gray-700 bg-emerald-600 py-4 active:opacity-80">
-            <Text className="text-sm font-semibold text-white">New task</Text>
-          </Pressable>
-
-          {/* New Event */}
-          <Pressable
-            onPress={() => {
-              /* TODO: events */
-            }}
-            className="flex-1 items-center rounded-3xl border border-gray-700 bg-indigo-600 py-4 active:opacity-80">
-            <Text className="text-sm font-semibold text-white">New event</Text>
-          </Pressable>
-
-          {/* Invite */}
-          <Pressable
-            onPress={() => {
-              /* TODO: invites */
-            }}
-            className="flex-1 items-center rounded-3xl border border-gray-700 bg-amber-600 py-4 active:opacity-80">
-            <Text className="text-sm font-semibold text-white">Invite</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      {/* Upcoming section */}
-      <View className="mt-6 px-6">
-        <Text className="mb-3 text-base font-semibold text-white">Upcoming</Text>
-        {/* Placeholder for upcoming items */}
-      </View>
-
-      {/* Household */}
-      <View className="mt-6 px-6">
-        <Text className="mb-3 text-base font-semibold text-white">Your household</Text>
-        {/* Card */}
-        <View className="rounded-3xl border border-gray-700 bg-gray-800 p-4">
-          <Text className="text-lg font-semibold text-white">Kot Leuven - Tiensestraat</Text>
-          <Text className="mt-1 text-gray-400">4 roommates • 2 open tasks</Text>
-          <View className="mt-4 flex-row gap-3">
-            {/* Pills */}
-            <View className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">
-              <Text className="text-sm text-gray-300">You</Text>
-            </View>
-            <View className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">
-              <Text className="text-sm text-gray-300">Alex</Text>
-            </View>
-            <View className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">
-              <Text className="text-sm text-gray-300">Maya</Text>
-            </View>
-            <View className="rounded-full border border-gray-700 bg-gray-900 px-3 py-1">
-              <Text className="text-sm text-gray-300">Robin</Text>
-            </View>
-          </View>
-        </View>
+        )}
       </View>
     </ScrollView>
   );
