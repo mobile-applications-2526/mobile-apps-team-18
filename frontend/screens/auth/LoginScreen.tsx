@@ -10,9 +10,9 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import { userService } from '../services/userService';
+import { userService } from '../../services/userService';
 import { Link, router } from 'expo-router';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
 
 const LoginScreen = () => {
@@ -53,7 +53,7 @@ const LoginScreen = () => {
           {!inputFocused && (
             <View className="flex-1 items-center justify-center">
               <Image
-                source={require('../assets/hero-picture.png')}
+                source={require('../../assets/hero-picture.png')}
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="contain"
                 accessibilityLabel="KotConnect logo"

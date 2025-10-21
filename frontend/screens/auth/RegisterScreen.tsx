@@ -10,11 +10,11 @@ import {
   ScrollView,
 } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { userService } from '../services/userService';
+import { userService } from '../../services/userService';
 import { router } from 'expo-router';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { ArrowLeft } from 'lucide-react-native';
-import CustomInput from '../components/CustomInput';
+import CustomInput from '../../components/CustomInput';
 
 const RegisterScreen = () => {
   const { login } = useAuth();
@@ -87,7 +87,7 @@ const RegisterScreen = () => {
           {!inputFocused && (
             <View className="flex-1 items-center justify-center">
               <Image
-                source={require('../assets/hero-picture.png')}
+                source={require('../../assets/hero-picture.png')}
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="contain"
                 accessibilityLabel="KotConnect logo"

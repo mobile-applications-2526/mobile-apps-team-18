@@ -9,7 +9,7 @@ const WelcomeScreen = () => {
       {/* Logo at the top */}
       <View className="flex-1 items-center justify-center">
         <Image
-          source={require('../assets/hero-picture.png')}
+          source={require('../../assets/hero-picture.png')}
           style={{ width: '100%', height: '100%' }}
           resizeMode="contain"
           accessibilityLabel="KotConnect logo"

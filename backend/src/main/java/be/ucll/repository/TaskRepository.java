@@ -12,6 +12,7 @@ import be.ucll.types.TaskType;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByType(TaskType type);
-    List<Task> findByKotAddressContainingIgnoreCase(String kotAddress);
-    
+
+    List<Task> findByDormId(Long dormId);
+
 }

@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import be.ucll.exception.TaskException;
 import be.ucll.model.Task;
 import be.ucll.repository.TaskRepository;
 import be.ucll.types.TaskType;
 
 @Service
 public class TaskService {
-    
+
     private final TaskRepository taskRepository;
 
     public TaskService(TaskRepository taskRepository) {
@@ -21,11 +22,11 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public List<Task> getTasksByKotAddress(String kotAddress) {
-        if (kotAddress == null || kotAddress.trim().isEmpty()) {
-            throw new IllegalArgumentException("KotAddress cannot be null or empty");
+    public List<Task> getTasksByDormId(Long dormId) {
+        if (dormId == null) {
+            throw new TaskException("DormId cannot be null or empty");
         }
-        return taskRepository.findByKotAddressContainingIgnoreCase(kotAddress.trim());
+        return taskRepository.findByDormId(dormId);
     }
 
     public Task createTask(Task task) {

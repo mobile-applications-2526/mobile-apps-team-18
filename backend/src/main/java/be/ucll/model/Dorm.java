@@ -5,13 +5,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -30,8 +27,17 @@ public class Dorm {
     @NotBlank(message = "Code may not be empty")
     private String code;
 
-    @ManyToMany(mappedBy = "dorms")
+    @OneToMany(mappedBy = "dorm")
+    @JsonManagedReference
     private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "dorm")
+    @JsonManagedReference
+    private List<Task> tasks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "dorm")
+    @JsonManagedReference
+    private List<Event> events = new ArrayList<>();
 
     protected Dorm() {
     }
@@ -63,6 +69,45 @@ public class Dorm {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
+    public void addUser(User user) {
+        this.users.add(user);
+        user.setDorm(this);
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+        task.setDorm(this);
+    }
+
+    public void addEvent(Event event) {
+        this.events.add(event);
+        event.setDorm(this);
     }
 
 }

@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { useAuth } from '../context/AuthContext';
-import { userService } from '../services/userService';
-import type { Profile } from '../types';
+import { useAuth } from '../../context/AuthContext';
+import { userService } from '../../services/userService';
+import type { Profile } from '../../types';
 import { ArrowLeft, User, Mail, Calendar, MapPin, Sparkles, Check } from 'lucide-react-native';
 
 const ProfileScreen = () => {

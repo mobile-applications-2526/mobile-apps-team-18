@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { ArrowLeft, FileText } from 'lucide-react-native';
-import Section from '../components/Section';
-import BulletPoint from '../components/BulletPoint';
+import Section from '../../components/Section';
+import BulletPoint from '../../components/BulletPoint';
 
 export default function TermsPrivacyScreen() {
   return (

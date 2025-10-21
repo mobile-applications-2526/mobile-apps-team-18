@@ -1,6 +1,6 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import RegisterScreen from "../screens/RegisterScreen";
+import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import RegisterScreen from '../screens/auth/RegisterScreen';
 
 export default function login() {
   return (

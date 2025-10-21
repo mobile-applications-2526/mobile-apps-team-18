@@ -91,7 +91,7 @@ public class UserService {
 
     public UserPongDTO ping(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("Unauthorized");
+            throw new UserException("Unauthorized");
         }
 
         System.out.println(authentication.getName());
@@ -99,7 +99,7 @@ public class UserService {
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserException("User not found"));
 
         return new UserPongDTO(
                 user.getId(),
