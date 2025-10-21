@@ -76,6 +76,10 @@ public class DbInitializer {
                 Task task5 = new Task("Clean the kitchen", "Deep clean scheduled before inspection", TaskType.CLEANING,
                                 LocalDate.now().plusDays(6), rajo);
 
+                // Completing some tasks
+                task1.setDone(true);
+                task2.setDone(true);
+
                 // Set assigned users
                 task1.setAssignedUser(nathan);
                 task2.setAssignedUser(rajo);

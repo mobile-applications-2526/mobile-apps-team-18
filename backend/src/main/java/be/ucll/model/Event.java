@@ -37,6 +37,8 @@ public class Event {
     @FutureOrPresent(message = "Event date must be in the present or future")
     private LocalDate date;
 
+    private boolean done = false;
+
     @ManyToOne
     @JoinColumn(name = "organizer_id")
     private User organizer;
@@ -111,6 +113,14 @@ public class Event {
 
     public void setDorm(Dorm dorm) {
         this.dorm = dorm;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 
 }

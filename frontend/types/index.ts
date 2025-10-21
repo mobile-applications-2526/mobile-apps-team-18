@@ -8,11 +8,11 @@ export type AuthenticationResponse = {
 };
 
 export type User = {
-  id: number;
-  username: string;
-  email: string;
-  geboortedatum: string;
-  locatie: string;
+  id?: number;
+  username?: string;
+  email?: string;
+  geboortedatum?: string;
+  locatie?: string;
 };
 
 export type SignupInput = {
@@ -47,17 +47,19 @@ export type Event = {
   location?: string;
   description?: string;
   kotAddress?: string;
-  organizer: User;
+  organizer?: User;
+  done?: boolean;
 };
 
 export type Task = {
-  id: number;
-  title: string;
-  date: string;
-  type: TaskType;
+  id?: number;
+  title?: string;
+  date?: string;
+  type?: TaskType;
   assignedUser?: User;
   description?: string;
   kotAddress?: string;
+  done?: boolean;
 };
 
 export type Dorm = {

@@ -24,6 +24,7 @@ CREATE TABLE TASKS (
     description TEXT NOT NULL,
     task_type TEXT NOT NULL,
     "date" DATE NOT NULL,
+    done BOOLEAN,
     
     assigned_user_id BIGINT NOT NULL,
     created_by_id BIGINT,
@@ -40,6 +41,7 @@ CREATE TABLE EVENTS (
     description TEXT NOT NULL,
     "date" DATE NOT NULL,
     organizer_id BIGINT NOT NULL,
+    done BOOLEAN,
     
     dorm_id BIGINT,
 
