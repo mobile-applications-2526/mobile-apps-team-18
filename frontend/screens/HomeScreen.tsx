@@ -1,6 +1,5 @@
-'use client';
-
 import { View, Text, Pressable, TextInput, Alert, ScrollView } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import { useAuth } from '../context/AuthContext';
 import { router } from 'expo-router';
 import useSWR, { mutate } from 'swr';
@@ -8,13 +7,13 @@ import { useState, useMemo } from 'react';
 import DormService from '../services/DormService';
 import type { Dorm } from '../types';
 import SectionHeader from '../components/SectionHeader';
-import React from 'react';
 import { Check, X } from 'lucide-react-native';
+import React from 'react';
 
 export const HomeScreen = () => {
   const { logout, auth, isLoading } = useAuth();
   const [code, setCode] = useState<string>('');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
   const handleLogout = async () => {
     await logout();
@@ -30,9 +29,7 @@ export const HomeScreen = () => {
     data: dorm,
     isLoading: dataLoading,
     error,
-  } = useSWR(auth?.token ? 'homeData' : null, fetcher, {
-    revalidateOnFocus: false,
-  });
+  } = useSWR(auth?.token ? 'homeData' : null, fetcher, { revalidateOnFocus: false });
 
   const handleJoinDorm = async () => {
     if (!code || !code.trim()) {
@@ -48,40 +45,8 @@ export const HomeScreen = () => {
     }
   };
 
-  const weekDates = useMemo(() => {
-    const dates = [];
-    const today = new Date();
-    const currentDay = today.getDay();
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(monday);
-      date.setDate(monday.getDate() + i);
-      dates.push(date);
-    }
-    return dates;
-  }, []);
-
-  const monthYear = useMemo(() => {
-    const months = [
-      'Januari',
-      'Februari',
-      'Maart',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Augustus',
-      'September',
-      'Oktober',
-      'November',
-      'December',
-    ];
-    return `${months[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
-  }, [selectedDate]);
-
   const selectedDayLabel = useMemo(() => {
+    const date = new Date(selectedDate);
     const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
     const months = [
       'januari',
@@ -97,26 +62,48 @@ export const HomeScreen = () => {
       'november',
       'december',
     ];
-    return `${days[selectedDate.getDay()]} ${selectedDate.getDate()} ${months[selectedDate.getMonth()]}`;
-  }, [selectedDate]);
-
-  const selectedDateString = useMemo(() => {
-    return selectedDate.toISOString().split('T')[0];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
   }, [selectedDate]);
 
   const filteredTasks = useMemo(() => {
     if (!dorm?.tasks) return [];
-    return dorm.tasks.filter((task) => task.date?.startsWith(selectedDateString));
-  }, [dorm?.tasks, selectedDateString]);
+    return dorm.tasks.filter((task) => task.date?.startsWith(selectedDate));
+  }, [dorm?.tasks, selectedDate]);
 
   const filteredEvents = useMemo(() => {
     if (!dorm?.events) return [];
-    return dorm.events.filter((event) => event.date.startsWith(selectedDateString));
-  }, [dorm?.events, selectedDateString]);
+    return dorm.events.filter((event) => event.date.startsWith(selectedDate));
+  }, [dorm?.events, selectedDate]);
+
+  // Mark dates with tasks/events
+  const markedDates = useMemo(() => {
+    const marked: any = {};
+
+    dorm?.tasks?.forEach((task) => {
+      if (task.date) {
+        const dateKey = task.date.split('T')[0];
+        if (!marked[dateKey]) marked[dateKey] = { marked: true, dots: [] };
+      }
+    });
+
+    dorm?.events?.forEach((event) => {
+      const dateKey = event.date.split('T')[0];
+      if (!marked[dateKey]) marked[dateKey] = { marked: true };
+    });
+
+    // Highlight selected date
+    marked[selectedDate] = {
+      ...marked[selectedDate],
+      selected: true,
+      selectedColor: '#10b981',
+    };
+
+    return marked;
+  }, [dorm?.tasks, dorm?.events, selectedDate]);
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-gray-950">
         <View className="h-12 w-12 rounded-full border-4 border-gray-700 border-t-emerald-500" />
         <Text className="mt-4 text-gray-400">Loading...</Text>
       </View>
@@ -125,7 +112,7 @@ export const HomeScreen = () => {
 
   if (!auth) {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-gray-950">
         <Text className="font-bold text-red-500">Please login to access this page.</Text>
       </View>
     );
@@ -133,10 +120,9 @@ export const HomeScreen = () => {
 
   if (error || !dorm) {
     return (
-      <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
-        <Text className="mb-6 text-3xl font-bold text-white">Homepage</Text>
-
-        <View className="rounded-3xl border border-gray-700 bg-gray-800 p-6">
+      <ScrollView contentContainerClassName="pt-6 pb-10" showsVerticalScrollIndicator={false}>
+        <Text className="mb-6 px-6 text-3xl font-bold text-white">Homepage</Text>
+        <View className="mx-6 rounded-3xl border border-gray-700 bg-gray-800 p-6">
           <View className="items-center">
             <View className="mb-4 h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600">
               <Text className="text-3xl">🏠</Text>
@@ -171,7 +157,7 @@ export const HomeScreen = () => {
   }
 
   return (
-    <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerClassName="px-6 pt-6 pb-10" showsVerticalScrollIndicator={false}>
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-3xl font-bold text-white">{dorm.name}</Text>
         <Pressable
@@ -183,32 +169,30 @@ export const HomeScreen = () => {
         </Pressable>
       </View>
 
-      <View className="mb-4 rounded-3xl border border-gray-700 bg-gray-800 p-5">
-        <Text className="mb-4 text-center text-xl font-semibold text-white">{monthYear}</Text>
-
-        <View className="flex-row justify-between">
-          {['M', 'D', 'W', 'D', 'V', 'Z', 'Z'].map((day, index) => (
-            <View key={index} className="items-center" style={{ width: 40 }}>
-              <Text className="mb-3 text-xs font-medium text-gray-500">{day}</Text>
-              <Pressable
-                onPress={() => setSelectedDate(weekDates[index])}
-                className={`h-10 w-10 items-center justify-center rounded-full ${
-                  selectedDate.toDateString() === weekDates[index].toDateString()
-                    ? 'bg-white'
-                    : 'bg-transparent'
-                }`}>
-                <Text
-                  className={`text-sm font-semibold ${
-                    selectedDate.toDateString() === weekDates[index].toDateString()
-                      ? 'text-gray-950'
-                      : 'text-gray-300'
-                  }`}>
-                  {weekDates[index].getDate()}
-                </Text>
-              </Pressable>
-            </View>
-          ))}
-        </View>
+      {/* Calendar Component */}
+      <View className="mb-4 overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
+        <Calendar
+          current={selectedDate}
+          onDayPress={(day: any) => setSelectedDate(day.dateString)}
+          markedDates={markedDates}
+          theme={{
+            calendarBackground: '#1f2937',
+            textSectionTitleColor: '#9ca3af',
+            selectedDayBackgroundColor: '#10b981',
+            selectedDayTextColor: '#ffffff',
+            todayTextColor: '#10b981',
+            dayTextColor: '#e5e7eb',
+            textDisabledColor: '#4b5563',
+            monthTextColor: '#ffffff',
+            textMonthFontWeight: 'bold',
+            textDayFontSize: 16,
+            textMonthFontSize: 18,
+            arrowColor: '#10b981',
+          }}
+          style={{
+            paddingBottom: 10,
+          }}
+        />
       </View>
 
       <View className="rounded-3xl border border-gray-700 bg-gray-800 px-5">
@@ -232,11 +216,8 @@ export const HomeScreen = () => {
                         <Text className="text-xs font-medium text-emerald-400">Taak</Text>
                       </View>
                       <Text className="text-sm text-gray-400">{task.assignedUser?.username}</Text>
-
                       <View
-                        className={`ml-auto rounded-full p-2 ${
-                          task.done ? 'bg-green-500/30' : 'bg-red-500/30'
-                        }`}>
+                        className={`ml-auto rounded-full p-2 ${task.done ? 'bg-green-500/30' : 'bg-red-500/30'}`}>
                         {task.done ? (
                           <Check size={16} color="#22c55e" />
                         ) : (
@@ -258,11 +239,8 @@ export const HomeScreen = () => {
                         <Text className="text-xs font-medium text-purple-400">Evenement</Text>
                       </View>
                       <Text className="text-sm text-gray-400">{event.organizer?.username}</Text>
-
                       <View
-                        className={`ml-auto rounded-full p-2 ${
-                          event.done ? 'bg-green-500/30' : 'bg-red-500/30'
-                        }`}>
+                        className={`ml-auto rounded-full p-2 ${event.done ? 'bg-green-500/30' : 'bg-red-500/30'}`}>
                         {event.done ? (
                           <Check size={16} color="#22c55e" />
                         ) : (
@@ -270,7 +248,6 @@ export const HomeScreen = () => {
                         )}
                       </View>
                     </View>
-
                     {event.location && (
                       <Text className="mt-1 text-xs text-gray-500">📍 {event.location}</Text>
                     )}

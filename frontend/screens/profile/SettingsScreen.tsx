@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import { userService } from '../../services/userService';
-import type { Profile } from '../../types';
-import { Bell, Palette, FileText, LogOut, ChevronRight, User } from 'lucide-react-native';
+import { Bell, Palette, FileText, LogOut, ChevronRight, UserIcon } from 'lucide-react-native';
 import { router } from 'expo-router';
 import SectionHeader from '../../components/SectionHeader';
 import SettingsItem from '../../components/SettingsItem';
+import { UserService } from '../../services/UserService';
+import { User } from '../../types';
 
 const SettingsScreen = () => {
   const { auth, logout } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const SettingsScreen = () => {
         return;
       }
       try {
-        const data = await userService.getProfile(auth.token);
+        const data = await UserService.getProfile(auth.token);
         if (mounted) setProfile(data);
       } catch (e: any) {
         console.error('Failed to load profile:', e);
@@ -34,20 +34,6 @@ const SettingsScreen = () => {
       mounted = false;
     };
   }, [auth?.token]);
-
-  const handleLogout = () => {
-    Alert.alert('Log out?', 'Are you sure you want to log out of your account?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Log out',
-        style: 'destructive',
-        onPress: async () => {
-          await logout();
-          router.replace('/login');
-        },
-      },
-    ]);
-  };
 
   return (
     <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
@@ -70,7 +56,7 @@ const SettingsScreen = () => {
               <View className="p-5">
                 <View className="flex-row items-center">
                   <View className="mr-4 h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600">
-                    <User color="#fff" size={28} />
+                    <UserIcon color="#fff" size={28} />
                   </View>
                   <View className="flex-1">
                     <Text className="mb-1 text-xl font-bold text-white">
@@ -126,7 +112,7 @@ const SettingsScreen = () => {
               icon={LogOut}
               label="Log Out"
               description="Sign out of your account"
-              onPress={handleLogout}
+              onPress={logout}
               showChevron={false}
               destructive
             />

@@ -1,5 +1,6 @@
 package be.ucll.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -40,5 +41,30 @@ public class UserController {
     @GetMapping("/ping")
     public UserPongDTO ping(Authentication authentication) {
         return userService.ping(authentication);
+    }
+
+    @PutMapping("/username/{username}")
+    public AuthenticationResponse putUsername(Authentication authentication, @PathVariable String username) {
+        return userService.updateUsername(authentication, username);
+    }
+
+    @PutMapping("/email/{email}")
+    public AuthenticationResponse putEmail(Authentication authentication, @PathVariable String email) {
+        return userService.updateEmail(authentication, email);
+    }
+
+    @PutMapping("/location/{location}")
+    public AuthenticationResponse putLocation(Authentication authentication, @PathVariable String location) {
+        return userService.updateLocation(authentication, location);
+    }
+
+    @PutMapping("/birthday/{birthday}")
+    public AuthenticationResponse putBirthday(Authentication authentication, @PathVariable LocalDate birthday) {
+        return userService.updateBirthday(authentication, birthday);
+    }
+
+    @DeleteMapping()
+    public String deleteUser(Authentication authentication) {
+        return userService.deleteUser(authentication);
     }
 }

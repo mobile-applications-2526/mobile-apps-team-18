@@ -6,9 +6,9 @@ DROP TABLE IF EXISTS USERS;
 CREATE TABLE USERS (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username TEXT NOT NULL,
-    email TEXT NOT NULL,
-    geboortedatum DATE NOT NULL,
-    locatie TEXT NOT NULL,
+    email TEXT,
+    geboortedatum DATE,
+    locatie TEXT,
     password TEXT NOT NULL
 ); 
 

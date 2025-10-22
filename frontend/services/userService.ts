@@ -1,4 +1,4 @@
-import { AuthenticationResponse, Profile, SignupInput, SignupUser, User } from '../types';
+import { AuthenticationResponse, SignupInput, SignupUser, User } from '../types';
 import { API_BASE, handleJson } from './apiClient';
 
 export async function login(username: string, password: string): Promise<AuthenticationResponse> {
@@ -23,7 +23,7 @@ export async function signup(input: SignupInput): Promise<SignupUser> {
   return handleJson<SignupUser>(res);
 }
 
-export async function getProfile(token: string): Promise<Profile> {
+export async function getProfile(token: string): Promise<User> {
   const res = await fetch(`${API_BASE}/users/ping`, {
     method: 'GET',
     headers: {
@@ -31,23 +31,64 @@ export async function getProfile(token: string): Promise<Profile> {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
-  return handleJson<Profile>(res);
+  return handleJson<User>(res);
 }
 
-export async function updateProfile(token: string, input: Partial<Profile>): Promise<Profile> {
-  const res = await fetch(`${API_BASE}/users/me`, {
+export async function updateUsername(
+  token: string,
+  username: string
+): Promise<AuthenticationResponse> {
+  const res = await fetch(`${API_BASE}/users/username/${username}`, {
     method: 'PUT',
     headers: {
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify(input),
   });
-  return handleJson<Profile>(res);
+  return handleJson<AuthenticationResponse>(res);
+}
+
+export async function updateEmail(token: string, email: string): Promise<AuthenticationResponse> {
+  const res = await fetch(`${API_BASE}/users/email/${email}`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return handleJson<AuthenticationResponse>(res);
+}
+
+export async function updateLocation(
+  token: string,
+  location: string
+): Promise<AuthenticationResponse> {
+  const res = await fetch(`${API_BASE}/users/location/${location}`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return handleJson<AuthenticationResponse>(res);
+}
+
+export async function updateBirthday(
+  token: string,
+  birthday: string
+): Promise<AuthenticationResponse> {
+  const res = await fetch(`${API_BASE}/users/birthday/${birthday}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return handleJson<AuthenticationResponse>(res);
 }
 
 export async function deleteProfile(token: string): Promise<string> {
-  const res = await fetch(`${API_BASE}/users/me`, {
+  const res = await fetch(`${API_BASE}/users`, {
     method: 'DELETE',
     headers: {
       Accept: 'application/json',
@@ -57,4 +98,13 @@ export async function deleteProfile(token: string): Promise<string> {
   return handleJson<string>(res);
 }
 
-export const userService = { login, signup, getProfile, updateProfile, deleteProfile };
+export const UserService = {
+  login,
+  signup,
+  getProfile,
+  updateUsername,
+  deleteProfile,
+  updateEmail,
+  updateLocation,
+  updateBirthday,
+};
