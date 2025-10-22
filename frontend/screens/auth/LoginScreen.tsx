@@ -10,10 +10,10 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import { userService } from '../../services/userService';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
+import { UserService } from '../../services/UserService';
 
 const LoginScreen = () => {
   const { login } = useAuth();
@@ -33,7 +33,7 @@ const LoginScreen = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await userService.login(username, password);
+      const data = await UserService.login(username, password);
       await login({ token: data.token, username: data.username });
       router.replace('/(tabs)/home');
     } catch (e: any) {
@@ -67,7 +67,7 @@ const LoginScreen = () => {
             <View className="relative mb-6 flex-row items-center gap-4">
               <Pressable
                 accessibilityRole="button"
-                onPress={() => router.push('/')}
+                onPress={() => router.back()}
                 className="rounded-xl border border-gray-600 px-2 py-1">
                 <ArrowLeft color="#9CA3AF" size={24} />
               </Pressable>

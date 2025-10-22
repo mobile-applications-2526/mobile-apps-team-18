@@ -13,6 +13,7 @@ import be.ucll.exception.UserException;
 import be.ucll.model.User;
 import be.ucll.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -71,9 +72,6 @@ public class UserService {
         final var hashedPassword = passwordEncoder.encode(userInput.password());
         final var user = new User(
                 userInput.username(),
-                userInput.email(),
-                userInput.geboortedatum(),
-                userInput.locatie(),
                 hashedPassword);
 
         userRepository.save(user);
@@ -108,4 +106,119 @@ public class UserService {
                 user.getGeboortedatum(),
                 user.getLocatie());
     }
+
+    public AuthenticationResponse updateUsername(Authentication authentication, String username) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserException("Unauthorized");
+        }
+
+        String authUsername = authentication.getName();
+
+        User user = userRepository.findByUsername(authUsername)
+                .orElseThrow(() -> new UserException("User " + authUsername + " not found"));
+
+        if (userRepository.existsByUsername(username)) {
+            throw new UserException("Username is already in use.");
+        }
+
+        user.setUsername(username);
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user);
+        return new AuthenticationResponse(
+                "Username updated successfully",
+                token,
+                user.getUsername(),
+                user.getEmail(),
+                user.getGeboortedatum(),
+                user.getLocatie());
+    }
+
+    public AuthenticationResponse updateEmail(Authentication authentication, String email) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserException("Unauthorized");
+        }
+
+        String authUsername = authentication.getName();
+
+        User user = userRepository.findByUsername(authUsername)
+                .orElseThrow(() -> new UserException("User " + authUsername + " not found"));
+
+        if (userRepository.existsByEmail(email)) {
+            throw new UserException("Email is already in use.");
+        }
+
+        user.setEmail(email);
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user);
+        return new AuthenticationResponse(
+                "Email updated successfully",
+                token,
+                user.getUsername(),
+                user.getEmail(),
+                user.getGeboortedatum(),
+                user.getLocatie());
+    }
+
+    public AuthenticationResponse updateLocation(Authentication authentication, String location) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserException("Unauthorized");
+        }
+
+        String authUsername = authentication.getName();
+
+        User user = userRepository.findByUsername(authUsername)
+                .orElseThrow(() -> new UserException("User " + authUsername + " not found"));
+
+        user.setLocatie(location);
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user);
+        return new AuthenticationResponse(
+                "Location updated successfully",
+                token,
+                user.getUsername(),
+                user.getEmail(),
+                user.getGeboortedatum(),
+                user.getLocatie());
+    }
+
+    public AuthenticationResponse updateBirthday(Authentication authentication, LocalDate birthday) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserException("Unauthorized");
+        }
+
+        String authUsername = authentication.getName();
+
+        User user = userRepository.findByUsername(authUsername)
+                .orElseThrow(() -> new UserException("User " + authUsername + " not found"));
+
+        user.setGeboortedatum(birthday);
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user);
+        return new AuthenticationResponse(
+                "Birthday updated successfully",
+                token,
+                user.getUsername(),
+                user.getEmail(),
+                user.getGeboortedatum(),
+                user.getLocatie());
+    }
+
+    public String deleteUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserException("Unauthorized");
+        }
+
+        String authUsername = authentication.getName();
+
+        User user = userRepository.findByUsername(authUsername)
+                .orElseThrow(() -> new UserException("User " + authUsername + " not found"));
+
+        userRepository.delete(user);
+        return "account deleted";
+    }
+
 }

@@ -1,8 +1,6 @@
 package be.ucll.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -11,12 +9,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 
 @Entity
@@ -29,14 +24,11 @@ public class User {
     @NotBlank(message = "Username should not be empty")
     private String username;
 
-    @NotBlank(message = "Email should not be empty")
     private String email;
 
-    @NotNull(message = "Geboortedatum should not be empty")
     @Past(message = "Geboortedatum must be in the past")
     private LocalDate geboortedatum;
 
-    @NotBlank(message = "Kot locatie may not be empty")
     private String locatie;
 
     @NotBlank(message = "Password should not be empty")
@@ -55,6 +47,11 @@ public class User {
         setEmail(email);
         setGeboortedatum(geboortedatum);
         setLocatie(locatie);
+        setPassword(password);
+    }
+
+    public User(String username, String password) {
+        setUsername(username);
         setPassword(password);
     }
 
