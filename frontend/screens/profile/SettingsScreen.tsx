@@ -13,6 +13,11 @@ const SettingsScreen = () => {
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/login');
+  };
+
   useEffect(() => {
     let mounted = true;
     const run = async () => {
@@ -112,7 +117,7 @@ const SettingsScreen = () => {
               icon={LogOut}
               label="Log Out"
               description="Sign out of your account"
-              onPress={logout}
+              onPress={handleLogout}
               showChevron={false}
               destructive
             />
