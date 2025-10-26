@@ -1,7 +1,6 @@
 import { View, Text, Pressable, TextInput, Alert, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useAuth } from '../context/AuthContext';
-import { router } from 'expo-router';
 import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
 import DormService from '../services/DormService';
@@ -11,14 +10,9 @@ import { Check, X } from 'lucide-react-native';
 import React from 'react';
 
 export const HomeScreen = () => {
-  const { logout, auth, isLoading } = useAuth();
+  const { auth, isLoading } = useAuth();
   const [code, setCode] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
-
-  const handleLogout = async () => {
-    await logout();
-    router.replace('/login');
-  };
 
   const fetcher = async (): Promise<Dorm> => {
     if (!auth?.token) throw new Error('No auth token');
@@ -160,13 +154,6 @@ export const HomeScreen = () => {
     <ScrollView contentContainerClassName="px-6 pt-6 pb-10" showsVerticalScrollIndicator={false}>
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-3xl font-bold text-white">{dorm.name}</Text>
-        <Pressable
-          onPress={handleLogout}
-          className="rounded-xl border border-gray-700 bg-gray-800 px-4 py-2 active:opacity-70"
-          accessibilityRole="button"
-          accessibilityLabel="Logout">
-          <Text className="text-sm font-medium text-gray-300">Logout</Text>
-        </Pressable>
       </View>
 
       {/* Calendar Component */}
