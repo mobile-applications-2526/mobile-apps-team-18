@@ -1,3 +1,5 @@
+'use client';
+
 import { type LucideIcon, CheckCircle, XCircle } from 'lucide-react-native';
 import React from 'react';
 import { View, Text, TextInput, ActivityIndicator } from 'react-native';
@@ -14,6 +16,7 @@ interface Props {
   success?: boolean;
   error?: boolean;
 }
+
 export default function InputField({
   icon: Icon,
   label,

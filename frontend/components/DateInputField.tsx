@@ -1,5 +1,7 @@
+'use client';
+
 import { type LucideIcon, CheckCircle, XCircle } from 'lucide-react-native';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +12,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import React from 'react';
 
 interface Props {
   icon: LucideIcon;
@@ -44,7 +47,7 @@ export default function DateInputField({
         <View className="mb-3 flex-row items-center">
           <View
             className={`mr-4 h-12 w-12 items-center justify-center rounded-2xl ${
-              value ? 'bg-emerald-600/20' : 'bg-gray-800'
+              !value ? 'bg-gray-700' : 'bg-emerald-600/20'
             }`}>
             <Icon color={value ? '#10B981' : '#9CA3AF'} size={22} />
           </View>
@@ -66,7 +69,7 @@ export default function DateInputField({
 
         <Pressable
           onPress={() => setShowPicker(true)}
-          className="rounded-2xl border border-gray-700 bg-gray-800 px-5 py-4">
+          className="rounded-2xl border border-gray-600 bg-gray-900 px-5 py-4">
           <Text className={value ? 'text-white' : 'text-gray-500'}>{formatDate(value)}</Text>
         </Pressable>
 
