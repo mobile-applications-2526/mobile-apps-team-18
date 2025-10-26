@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 
@@ -24,6 +25,7 @@ public class User {
     @NotBlank(message = "Username should not be empty")
     private String username;
 
+    @Email(message = "Please provide a valid mail address")
     private String email;
 
     @Past(message = "Geboortedatum must be in the past")
