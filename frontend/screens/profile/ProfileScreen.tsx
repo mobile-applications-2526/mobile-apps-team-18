@@ -90,6 +90,7 @@ const ProfileScreen = () => {
       setUsernameError(true);
       Alert.alert('Error', 'Failed to update username');
       setTimeout(() => setUsernameError(false), 3000);
+      setUsername('');
     } finally {
       setUsernameLoading(false);
     }
@@ -110,6 +111,7 @@ const ProfileScreen = () => {
       setEmailError(true);
       Alert.alert('Error', 'Failed to update email');
       setTimeout(() => setEmailError(false), 3000);
+      setEmail('');
     } finally {
       setEmailLoading(false);
     }
@@ -130,6 +132,7 @@ const ProfileScreen = () => {
       setLocationError(true);
       Alert.alert('Error', 'Failed to update location');
       setTimeout(() => setLocationError(false), 3000);
+      setLocation('');
     } finally {
       setLocationLoading(false);
     }
@@ -152,6 +155,7 @@ const ProfileScreen = () => {
       setBirthdayError(true);
       Alert.alert('Error', 'Failed to update birthday');
       setTimeout(() => setBirthdayError(false), 3000);
+      setBirthday(null);
     } finally {
       setBirthdayLoading(false);
     }
