@@ -5,8 +5,8 @@ import { Bell, Palette, FileText, LogOut, ChevronRight, UserIcon } from 'lucide-
 import { router } from 'expo-router';
 import SectionHeader from '../../components/SectionHeader';
 import SettingsItem from '../../components/SettingsItem';
-import { UserService } from '../../services/UserService';
 import { User } from '../../types';
+import { UserService } from '../../services/UserService';
 
 const SettingsScreen = () => {
   const { auth, logout } = useAuth();
