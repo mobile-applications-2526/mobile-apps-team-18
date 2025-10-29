@@ -221,4 +221,9 @@ public class UserService {
         return "account deleted";
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException("User " + username + " not found"));
+    }
+
 }

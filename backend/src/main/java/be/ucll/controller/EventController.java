@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
 
+import be.ucll.controller.dto.EventDTO;
 import be.ucll.model.Event;
 import be.ucll.service.EventService;
 import jakarta.validation.Valid;
@@ -35,9 +37,9 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
-    @PostMapping
-    public Event createEvent(@Valid @RequestBody Event event) {
-        return eventService.createEvent(event);
+    @PostMapping("/{dormCode}")
+    public Event createEvent(@PathVariable String dormCode, @Valid @RequestBody EventDTO event, Authentication authentication) {
+        return eventService.createEvent(dormCode, event, authentication);
     }
 
     @DeleteMapping("/{id}")
