@@ -9,7 +9,7 @@ export default function TabsLayout() {
         <Icon sf={'house.fill'} drawable="ic_menu_home" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="creator">
-        <Label> </Label>
+        <Label>Add</Label>
         <Icon sf={'plus'} drawable="ic_menu_add" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">

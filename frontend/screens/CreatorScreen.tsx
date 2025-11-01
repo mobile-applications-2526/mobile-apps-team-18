@@ -129,7 +129,7 @@ const CreatorScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
       <ScrollView
-        contentContainerClassName="px-5 pb-24 pt-4 bg-gray-950"
+        contentContainerClassName="px-5 pb-24 pt-4"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
         <View className="mb-6 flex-row items-center justify-between">
