@@ -6,23 +6,13 @@ import * as SecureStore from 'expo-secure-store';
  * Dynamically resolves API base URL for Expo (works in dev and prod).
  */
 function resolveApiBase() {
-  // 1) Explicit override via .env
-  if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
+  const isDev = process.env.EXPO_PUBLIC_DEV === 'true';
+
+  if (isDev) {
+    return 'http://localhost:8080';
   }
 
-  // 2) Try Expo dev host IP (works for emulator + LAN)
-  const hostUri =
-    (Constants as any)?.expoConfig?.hostUri || (Constants as any)?.manifest?.debuggerHost;
-
-  if (hostUri) {
-    const host = hostUri.split(':')[0];
-    return `http://${host}:8080`;
-  }
-
-  // 3) Local fallbacks
-  if (Platform.OS === 'android') return 'http://10.0.2.2:8080';
-  return 'http://localhost:8080';
+  return 'https://kotconnect-backend-team18-ekd9eefwh9gpdmcp.westeurope-01.azurewebsites.net';
 }
 
 export const API_BASE = resolveApiBase();
