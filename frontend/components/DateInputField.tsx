@@ -83,7 +83,6 @@ export default function DateInputField({
                       value={value || new Date()}
                       mode="date"
                       display="spinner"
-                      maximumDate={new Date()}
                       textColor="#fff"
                       onChange={(event, selectedDate) => {
                         if (selectedDate) onChange(selectedDate);
@@ -102,7 +101,6 @@ export default function DateInputField({
             value={value || new Date()}
             mode="date"
             display="default"
-            maximumDate={new Date()}
             onChange={(event, selectedDate) => {
               if (selectedDate) onChange(selectedDate);
               setShowPicker(false);

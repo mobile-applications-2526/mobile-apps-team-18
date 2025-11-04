@@ -3,6 +3,7 @@ package be.ucll.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import be.ucll.controller.dto.TaskDTO;
 import be.ucll.model.Task;
 import be.ucll.service.TaskService;
 import be.ucll.types.TaskType;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,9 +39,9 @@ public class TaskController {
         return taskService.getAllTasks();
     }
 
-    @PostMapping
-    public Task createTask(@Valid @RequestBody Task task) {
-        return taskService.createTask(task);
+    @PostMapping("/{dormCode}")
+    public Task createTask(@PathVariable String dormCode, @Valid @RequestBody TaskDTO taskDTO, Authentication authentication) {
+        return taskService.createTask(dormCode, taskDTO, authentication);
     }
 
     @DeleteMapping("/{id}")

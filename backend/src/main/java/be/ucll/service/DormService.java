@@ -79,4 +79,9 @@ public class DormService {
 
         return dormRepository.save(dorm);
     }
+
+    public Dorm getDormByCode(String dormCode) {
+        return dormRepository.findByCode(dormCode)
+                .orElseThrow(() -> new DormException("Dorm with code " + dormCode + " not found"));
+    }
 }

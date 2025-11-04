@@ -8,6 +8,7 @@ import type { Dorm } from '../types';
 import SectionHeader from '../components/SectionHeader';
 import { Check, X } from 'lucide-react-native';
 import React from 'react';
+import * as SecureStore from 'expo-secure-store';
 
 export const HomeScreen = () => {
   const { auth, isLoading } = useAuth();
@@ -16,7 +17,13 @@ export const HomeScreen = () => {
 
   const fetcher = async (): Promise<Dorm> => {
     if (!auth?.token) throw new Error('No auth token');
-    return await DormService.getDorm(auth.token);
+    const dormData = await DormService.getDorm(auth.token);
+    
+    if (dormData?.code) {
+      await SecureStore.setItemAsync('dormCode', dormData.code);
+    }
+    
+    return dormData;
   };
 
   const {
