@@ -42,7 +42,7 @@ export default function DateInputField({
   const formatDate = (date: Date | null) => (date ? date.toLocaleDateString() : placeholder);
 
   return (
-    <View className="overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
+    <View className="mb-4 overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
       <View className="p-5">
         <View className="mb-3 flex-row items-center">
           <View

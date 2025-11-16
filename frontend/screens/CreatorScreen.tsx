@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,88 +12,73 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
-import {
-  Calendar,
-  MapPin,
-  FileText,
-  CheckSquare,
-  ChevronDown,
-  Sparkles,
-  Zap,
-} from 'lucide-react-native';
-import EventService from '../services/EventService';
-import TaskService from '../services/TaskService';
-import { TaskType } from '../types';
 import InputField from '../components/InputField';
 import DateInputField from '../components/DateInputField';
 import * as SecureStore from 'expo-secure-store';
 import useSWR, { mutate } from 'swr';
-import React from 'react';
+import { Calendar, CheckSquare, FileText, MapPin, Sparkles } from 'lucide-react-native';
+import EventService from '../services/EventService';
+import TaskService from '../services/TaskService';
+import { TaskType } from '../types';
 import { Picker } from '@react-native-picker/picker';
 
 const CreatorScreen = () => {
   const { auth } = useAuth();
   const [dormCode, setDormCode] = useState<string>('');
-  const [isEvent, setIsEvent] = useState<boolean>(true);
-  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 
-  const [name, setName] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
-  const [eventDescription, setEventDescription] = useState<string>('');
+  const [isEvent, setIsEvent] = useState(true);
+
+  // Event fields
+  const [name, setName] = useState('');
+  const [location, setLocation] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
   const [eventDate, setEventDate] = useState<Date | null>(null);
 
-  const [title, setTitle] = useState<string>('');
-  const [taskDescription, setTaskDescription] = useState<string>('');
+  // Task fields
+  const [title, setTitle] = useState('');
+  const [taskDetails, setTaskDetails] = useState('');
   const [taskDate, setTaskDate] = useState<Date | null>(null);
   const [type, setType] = useState<TaskType>(TaskType.CLEANING);
-  const [typeDropdownOpen, setTypeDropdownOpen] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [celebration, setCelebration] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+
+  const { data: dorm } = useSWR(auth?.token ? 'homeData' : null);
+  const hasDorm = Boolean(
+    dorm &&
+      typeof dorm === 'object' &&
+      (dorm.id || dorm.code || (Array.isArray(dorm.users) && dorm.users.length > 0))
+  );
 
   useEffect(() => {
     const loadDormCode = async () => {
-      try {
-        const storedCode = await SecureStore.getItemAsync('dormCode');
-        if (storedCode) {
-          setDormCode(storedCode);
-        }
-      } catch (error) {
-        console.error('Error loading dorm code:', error);
-      }
+      const storedCode = await SecureStore.getItemAsync('dormCode');
+      if (storedCode) setDormCode(storedCode);
     };
     loadDormCode();
   }, []);
 
-  const { data: dorm } = useSWR(auth?.token ? 'homeData' : null);
-  const hasDorm = Boolean(
-    dorm && typeof dorm === 'object' && (dorm.id || dorm.code || (Array.isArray(dorm.users) && dorm.users.length > 0))
-  );
-
   const handleCreateEvent = async () => {
     if (!name.trim() || !eventDate) {
-      Alert.alert('Missing Fields', 'Please fill in name and date');
+      Alert.alert('Missing Fields', 'Please fill in the name and select a date');
       return;
     }
+
+    if (!auth?.token) return;
 
     setLoading(true);
     try {
       const formattedDate = eventDate.toISOString();
       await EventService.createEvent(
-        auth?.token as string,
+        auth.token,
         dormCode,
         name,
         formattedDate,
         location,
         eventDescription
       );
-      setCelebration(true);
-      setTimeout(() => {
-        Alert.alert('Success!', 'Event created successfully 🎉');
-        mutate('homeData');
-        router.back();
-      }, 400);
+      Alert.alert('Success!', 'Event created successfully 🎉');
+      mutate('homeData');
+      router.back();
     } catch (error: any) {
       Alert.alert('Error', error?.message || 'Failed to create event');
     } finally {
@@ -103,33 +88,37 @@ const CreatorScreen = () => {
 
   const handleCreateTask = async () => {
     if (!title.trim() || !taskDate) {
-      Alert.alert('Missing Fields', 'Please fill in title and date');
+      Alert.alert('Missing Fields', 'Please fill in the title and select a due date');
       return;
     }
+
+    if (!auth?.token) return;
 
     setLoading(true);
     try {
       const formattedDate = taskDate.toISOString();
-      await TaskService.createTask(
-        auth?.token as string,
-        dormCode,
-        title,
-        formattedDate,
-        type,
-        taskDescription
-      );
-      setCelebration(true);
-      setTimeout(() => {
-        Alert.alert('Success!', 'Task created successfully 🎉');
-        mutate('homeData');
-        router.back();
-      }, 400);
+      await TaskService.createTask(auth.token, dormCode, title, formattedDate, type, taskDetails);
+      Alert.alert('Success!', 'Task created successfully 🎉');
+      mutate('homeData');
+      router.back();
     } catch (error: any) {
       Alert.alert('Error', error?.message || 'Failed to create task');
     } finally {
       setLoading(false);
     }
   };
+
+  const isEventFormValid =
+    name.trim().length > 0 &&
+    eventDate !== null &&
+    location.trim().length > 0 &&
+    eventDescription.trim().length > 0;
+
+  const isTaskFormValid =
+    title.trim().length > 0 && taskDate !== null && taskDetails.trim().length > 0 && type !== null;
+
+  // Use the proper one depending on the form
+  const isFormValid = isEvent ? isEventFormValid : isTaskFormValid;
 
   const taskTypes = [
     { label: 'Cleaning', value: TaskType.CLEANING },
@@ -141,43 +130,21 @@ const CreatorScreen = () => {
     { label: 'Trash', value: TaskType.TRASH },
   ];
 
-  const getProgress = () => {
-    if (isEvent) {
-      const filled = [name, eventDate, location, eventDescription].filter(
-        (v) => v !== null && v !== undefined && v !== ''
-      ).length;
-      return (filled / 4) * 100;
-    } else {
-      const filled = [title, taskDate, type, taskDescription].filter(
-        (v) => v !== null && v !== undefined && v !== ''
-      ).length;
-      return (filled / 4) * 100;
-    }
-  };
-
-  const progress = getProgress();
-  const isFormValid = isEvent ? name.trim() && eventDate : title.trim() && taskDate;
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerClassName="px-6 pb-10 pt-6"
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
         <View className="mb-4 flex-row items-center justify-between">
           <Text className="text-3xl font-bold text-white">Creator</Text>
           <View className="items-center justify-center rounded-full bg-emerald-500/20 p-3">
             <Sparkles color="#10b981" size={24} />
           </View>
         </View>
-
         <View className="mb-6 flex-row gap-3 rounded-3xl border border-gray-700 bg-gray-800/50 p-2">
           <Pressable
             onPress={() => {
               setIsEvent(true);
-              setCurrentStep(0);
             }}
             className={`flex-1 items-center justify-center rounded-2xl py-3 ${
               isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
@@ -192,7 +159,6 @@ const CreatorScreen = () => {
           <Pressable
             onPress={() => {
               setIsEvent(false);
-              setCurrentStep(0);
             }}
             className={`flex-1 items-center justify-center rounded-2xl py-3 ${
               !isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
@@ -206,151 +172,123 @@ const CreatorScreen = () => {
           </Pressable>
         </View>
 
-        <View className="mb-6 gap-2">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-xs font-medium text-gray-400">Progress</Text>
-            <Text className="text-xs font-semibold text-emerald-500">{Math.round(progress)}%</Text>
-          </View>
-          <View className="h-2 overflow-hidden rounded-full bg-gray-700">
-            <View style={{ width: `${progress}%`, height: '100%' }} className="bg-emerald-500" />
-          </View>
-        </View>
-
-        <View className="mb-6 gap-3">
-          {isEvent ? (
-            <>
-              <InputField
-                icon={FileText}
-                label="Event Name"
-                value={name}
-                onChangeText={setName}
-                placeholder="Something catchy..."
-                onBlur={() => {}}
-                loading={false}
-              />
-
-              <DateInputField
-                icon={Calendar}
-                label="Date & Time"
-                value={eventDate}
-                onChange={setEventDate}
-                placeholder="Pick a date"
-                onConfirm={() => {}}
-              />
-
-              <InputField
-                icon={MapPin}
-                label="Where's it at?"
-                value={location}
-                onChangeText={setLocation}
-                placeholder="Location..."
-                onBlur={() => {}}
-                loading={false}
-              />
-
-              <InputField
-                icon={FileText}
-                label="Add details"
-                value={eventDescription}
-                onChangeText={setEventDescription}
-                placeholder="What's this about?"
-                onBlur={() => {}}
-                loading={false}
-              />
-            </>
-          ) : (
-            <>
-              <InputField
-                icon={CheckSquare}
-                label="Task Title"
-                value={title}
-                onChangeText={setTitle}
-                placeholder="What needs to happen?"
-                onBlur={() => {}}
-                loading={false}
-              />
-
-              <DateInputField
-                icon={Calendar}
-                label="Due Date"
-                value={taskDate}
-                onChange={setTaskDate}
-                placeholder="When's it due?"
-                onConfirm={() => {}}
-              />
-
-              <InputField
-                icon={FileText}
-                label="Details"
-                value={taskDescription}
-                onChangeText={setTaskDescription}
-                placeholder="Add some context..."
-                onBlur={() => {}}
-                loading={false}
-              />
-            </>
-          )}
-        </View>
-
-        {!isEvent && (
-          <View className="mb-6 ">
-            <Text className="mb-2 text-sm font-semibold text-gray-300">Task Category</Text>
-
-            <View className="overflow-hidden rounded-2xl border border-gray-700 bg-gray-900">
+        {isEvent ? (
+          <>
+            <InputField
+              label="Event Name"
+              value={name}
+              onChangeText={setName}
+              placeholder="Event Name"
+              icon={FileText}
+              onBlur={() => {}}
+              loading={false}
+            />
+            <DateInputField
+              label="Date"
+              value={eventDate}
+              onChange={setEventDate}
+              icon={Calendar}
+              placeholder="Select date"
+              onConfirm={() => {}}
+            />
+            <InputField
+              label="Location"
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Location"
+              icon={MapPin}
+              onBlur={() => {}}
+              loading={false}
+            />
+            <InputField
+              label="Description"
+              value={eventDescription}
+              onChangeText={setEventDescription}
+              placeholder="Description"
+              icon={FileText}
+              onBlur={() => {}}
+              loading={false}
+            />
+          </>
+        ) : (
+          <>
+            <InputField
+              label="Task Title"
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Task Title"
+              icon={FileText}
+              onBlur={() => {}}
+              loading={false}
+            />
+            <DateInputField
+              label="Due Date"
+              value={taskDate}
+              onChange={setTaskDate}
+              icon={Calendar}
+              placeholder="Select due date"
+              onConfirm={() => {}}
+            />
+            <InputField
+              label="Details"
+              value={taskDetails}
+              onChangeText={setTaskDetails}
+              placeholder="Details"
+              icon={FileText}
+              onBlur={() => {}}
+              loading={false}
+            />
+            <Text style={{ marginBottom: 5, color: '#999', fontWeight: 'bold' }}>Category</Text>
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: '#374151',
+                borderRadius: 24,
+                marginBottom: 10,
+              }}>
               <Picker
                 selectedValue={type}
                 onValueChange={(itemValue) => setType(itemValue)}
-                dropdownIconColor="#10b981"
-                itemStyle={{ color: '#ffffff', backgroundColor: '#1f2937' }} // optional styling
-              >
+                style={{ backgroundColor: '#1f2937', borderRadius: 24 }}>
                 {taskTypes.map((taskType) => (
-                  <Picker.Item key={taskType.value} label={taskType.label} value={taskType.value} />
+                  <Picker.Item
+                    key={taskType.value}
+                    label={taskType.label}
+                    value={taskType.value}
+                    color="#fff"
+                  />
                 ))}
               </Picker>
             </View>
-          </View>
+          </>
         )}
 
-        {/* Only show the create button for events when the user is in a dorm */}
-        {isEvent && !hasDorm ? (
-          <View className="mt-2 items-center rounded-2xl py-4">
-            <Text className="text-sm text-gray-500">Join or create a dorm to create events.</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={isEvent ? handleCreateEvent : handleCreateTask}
+          disabled={loading || !isFormValid}
+          className="mt-2 items-center justify-center rounded-lg py-4"
+          style={{
+            backgroundColor: loading ? '#374151' : isFormValid ? '#10B981' : 'rgba(55,65,81,0.5)',
+          }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {loading ? (
+              <Text style={{ fontSize: 18, fontWeight: '600', color: '#9CA3AF' }}>Creating...</Text>
+            ) : (
+              <>
+                <Sparkles color="#fff" size={20} />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: '600',
+                    color: isFormValid ? '#fff' : '#9CA3AF',
+                  }}>
+                  Create {isEvent ? 'Event' : 'Task'}
+                </Text>
+              </>
+            )}
           </View>
-        ) : (
-          <Pressable
-            accessibilityRole="button"
-            onPress={isEvent ? handleCreateEvent : handleCreateTask}
-            disabled={loading || !isFormValid}
-            className={`mt-2 items-center rounded-2xl py-4 transition-all ${
-              loading
-                ? 'bg-gray-700'
-                : isFormValid
-                  ? 'bg-emerald-500 active:scale-95'
-                  : 'bg-gray-700/50'
-            }`}>
-            <View className="flex-row items-center justify-center gap-2">
-              {loading ? (
-                <Text className="text-lg font-semibold text-gray-400">Creating...</Text>
-              ) : (
-                <>
-                  <Sparkles color="#ffffff" size={20} />
-                  <Text
-                    className={`text-lg font-semibold ${isFormValid ? 'text-white' : 'text-gray-500'}`}>
-                    Create {isEvent ? 'Event' : 'Task'}
-                  </Text>
-                </>
-              )}
-            </View>
-          </Pressable>
-        )}
-
-        <View className="mt-4 items-center">
-          <Text className="text-xs text-gray-500">
-            {isFormValid
-              ? "You're all set! Ready to go."
-              : 'Fill in the required fields to continue'}
-          </Text>
-        </View>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

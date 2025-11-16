@@ -2,17 +2,15 @@
 
 import { type LucideIcon, CheckCircle, XCircle } from 'lucide-react-native';
 import React from 'react';
-import { View, Text, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, ActivityIndicator, TextInputProps } from 'react-native';
 
-interface Props {
+interface Props extends TextInputProps {
   icon: LucideIcon;
   label: string;
   value: string;
   onChangeText: (text: string) => void;
-  onBlur: (text: string) => void;
-  loading: boolean;
-  placeholder: string;
-  keyboardType?: 'default' | 'email-address' | 'phone-pad';
+  onCustomBlur?: (text: string) => void;
+  loading?: boolean;
   success?: boolean;
   error?: boolean;
 }
@@ -22,17 +20,18 @@ export default function InputField({
   label,
   value,
   onChangeText,
-  onBlur,
-  loading,
+  onCustomBlur,
+  loading = false,
+  success = false,
+  error = false,
   placeholder,
-  keyboardType,
-  success,
-  error,
+  keyboardType = 'default',
+  ...rest
 }: Props) {
   const isEmpty = !value || !value.trim();
 
   return (
-    <View className="overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
+    <View className="mb-4 overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
       <View className="p-5">
         <View className="mb-3 flex-row items-center">
           <View
@@ -41,9 +40,11 @@ export default function InputField({
             }`}>
             <Icon color={isEmpty ? '#9CA3AF' : '#10B981'} size={22} />
           </View>
+
           <Text className="flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">
             {label}
           </Text>
+
           {loading && <ActivityIndicator size="small" color="#10B981" />}
           {!loading && success && (
             <View className="rounded-full bg-emerald-600/20 p-1">
@@ -56,15 +57,17 @@ export default function InputField({
             </View>
           )}
         </View>
+
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          onBlur={() => onBlur?.(value)}
+          onBlur={() => onCustomBlur?.(value)}
           placeholder={placeholder}
           placeholderTextColor="#6B7280"
           keyboardType={keyboardType}
           autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
           className="rounded-2xl border border-gray-600 bg-gray-900 px-5 py-4 text-base text-white"
+          {...rest}
         />
       </View>
     </View>
