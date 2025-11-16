@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import useSWR from 'swr';
 import {
   Bell,
   Palette,
@@ -22,6 +23,10 @@ const SettingsScreen = () => {
   const { auth, logout } = useAuth();
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isInDorm, setIsInDorm] = useState<boolean>(false);
+
+  // Subscribe to the 'homeData' SWR cache so this screen updates when the user joins/creates/leaves a dorm
+  const { data: dorm } = useSWR(auth?.token ? 'homeData' : null);
 
   const handleLogout = async () => {
     await logout();
@@ -36,7 +41,13 @@ const SettingsScreen = () => {
 
     try {
       await DormService.leaveDorm(auth.token);
+
       await mutate('homeData');
+
+      setIsInDorm(false);
+
+      Alert.alert('Left dorm', 'You have successfully left the dorm.');
+
       router.replace('/(tabs)/home');
     } catch (err) {
       console.error('[v0] Error leaving dorm:', err);
@@ -65,6 +76,12 @@ const SettingsScreen = () => {
       mounted = false;
     };
   }, [auth?.token]);
+
+  useEffect(() => {
+    if (dorm !== undefined) {
+      setIsInDorm(Boolean(dorm));
+    }
+  }, [dorm]);
 
   return (
     <ScrollView contentContainerClassName="px-6 pt-6" showsVerticalScrollIndicator={false}>
@@ -140,14 +157,16 @@ const SettingsScreen = () => {
           {/* Logout Button */}
           <View className="mt-6 rounded-3xl border border-red-900/50 bg-gray-800 px-5">
             <SectionHeader title="Dangerous area" />
-            <SettingsItem
-              icon={Unplug}
-              label="Leave dorm"
-              description="Leave your dorm"
-              onPress={handleLeaveDorm}
-              showChevron={false}
-              destructive
-            />
+            {isInDorm && (
+              <SettingsItem
+                icon={Unplug}
+                label="Leave dorm"
+                description="Leave your dorm"
+                onPress={handleLeaveDorm}
+                showChevron={false}
+                destructive
+              />
+            )}
             <View className="h-px bg-gray-700" />
             <SettingsItem
               icon={LogOut}
