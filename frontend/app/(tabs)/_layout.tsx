@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
@@ -11,8 +11,8 @@ export default function TabsLayout() {
 
   const hasDorm = Boolean(
     dorm &&
-    typeof dorm === 'object' &&
-    (dorm.id || dorm.code || (Array.isArray(dorm.users) && dorm.users.length > 0))
+      typeof dorm === 'object' &&
+      (dorm.id || dorm.code || (Array.isArray(dorm.users) && dorm.users.length > 0))
   );
 
   return (
@@ -27,12 +27,10 @@ export default function TabsLayout() {
         <Icon sf={'gear'} drawable="ic_account_circle" />
       </NativeTabs.Trigger>
 
-      {hasDorm && (
-        <NativeTabs.Trigger name="creator" role="search">
-          <Label>Add</Label>
-          <Icon sf={'plus'} drawable="ic_menu_add" />
-        </NativeTabs.Trigger>
-      )}
+      <NativeTabs.Trigger name="creator" role="search" hidden={!hasDorm}>
+        <Label>Add</Label>
+        <Icon sf={'plus'} drawable="ic_menu_add" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }
