@@ -27,7 +27,7 @@ import { TaskType } from '../types';
 import InputField from '../components/InputField';
 import DateInputField from '../components/DateInputField';
 import * as SecureStore from 'expo-secure-store';
-import { mutate } from 'swr';
+import useSWR, { mutate } from 'swr';
 import React from 'react';
 import { Picker } from '@react-native-picker/picker';
 
@@ -65,6 +65,11 @@ const CreatorScreen = () => {
     };
     loadDormCode();
   }, []);
+
+  const { data: dorm } = useSWR(auth?.token ? 'homeData' : null);
+  const hasDorm = Boolean(
+    dorm && typeof dorm === 'object' && (dorm.id || dorm.code || (Array.isArray(dorm.users) && dorm.users.length > 0))
+  );
 
   const handleCreateEvent = async () => {
     if (!name.trim() || !eventDate) {
@@ -306,31 +311,38 @@ const CreatorScreen = () => {
           </View>
         )}
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={isEvent ? handleCreateEvent : handleCreateTask}
-          disabled={loading || !isFormValid}
-          className={`mt-2 items-center rounded-2xl py-4 transition-all ${
-            loading
-              ? 'bg-gray-700'
-              : isFormValid
-                ? 'bg-emerald-500 active:scale-95'
-                : 'bg-gray-700/50'
-          }`}>
-          <View className="flex-row items-center justify-center gap-2">
-            {loading ? (
-              <Text className="text-lg font-semibold text-gray-400">Creating...</Text>
-            ) : (
-              <>
-                <Sparkles color="#ffffff" size={20} />
-                <Text
-                  className={`text-lg font-semibold ${isFormValid ? 'text-white' : 'text-gray-500'}`}>
-                  Create {isEvent ? 'Event' : 'Task'}
-                </Text>
-              </>
-            )}
+        {/* Only show the create button for events when the user is in a dorm */}
+        {isEvent && !hasDorm ? (
+          <View className="mt-2 items-center rounded-2xl py-4">
+            <Text className="text-sm text-gray-500">Join or create a dorm to create events.</Text>
           </View>
-        </Pressable>
+        ) : (
+          <Pressable
+            accessibilityRole="button"
+            onPress={isEvent ? handleCreateEvent : handleCreateTask}
+            disabled={loading || !isFormValid}
+            className={`mt-2 items-center rounded-2xl py-4 transition-all ${
+              loading
+                ? 'bg-gray-700'
+                : isFormValid
+                  ? 'bg-emerald-500 active:scale-95'
+                  : 'bg-gray-700/50'
+            }`}>
+            <View className="flex-row items-center justify-center gap-2">
+              {loading ? (
+                <Text className="text-lg font-semibold text-gray-400">Creating...</Text>
+              ) : (
+                <>
+                  <Sparkles color="#ffffff" size={20} />
+                  <Text
+                    className={`text-lg font-semibold ${isFormValid ? 'text-white' : 'text-gray-500'}`}>
+                    Create {isEvent ? 'Event' : 'Task'}
+                  </Text>
+                </>
+              )}
+            </View>
+          </Pressable>
+        )}
 
         <View className="mt-4 items-center">
           <Text className="text-xs text-gray-500">
