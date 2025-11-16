@@ -25,7 +25,7 @@ function resolveApiBase() {
 
   if (Platform.OS === 'android') return 'http://10.0.2.2:8080';
 
-  return 'http://localhost:8080';
+  return 'https://kotconnect-backend-team18-ekd9eefwh9gpdmcp.westeurope-01.azurewebsites.net';
 }
 
 export const API_BASE = resolveApiBase();
