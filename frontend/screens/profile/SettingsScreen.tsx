@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, Palette, FileText, LogOut, ChevronRight, UserIcon } from 'lucide-react-native';
+import {
+  Bell,
+  Palette,
+  FileText,
+  LogOut,
+  ChevronRight,
+  UserIcon,
+  Unplug,
+} from 'lucide-react-native';
 import { router } from 'expo-router';
 import SectionHeader from '../../components/SectionHeader';
 import SettingsItem from '../../components/SettingsItem';
 import { User } from '../../types';
 import { UserService } from '../../services/UserService';
+import DormService from '../../services/DormService';
+import { mutate } from 'swr';
 
 const SettingsScreen = () => {
   const { auth, logout } = useAuth();
@@ -16,6 +26,22 @@ const SettingsScreen = () => {
   const handleLogout = async () => {
     await logout();
     router.replace('/login');
+  };
+
+  const handleLeaveDorm = async () => {
+    if (!auth?.token) {
+      alert('No authentication token found');
+      return;
+    }
+
+    try {
+      await DormService.leaveDorm(auth.token);
+      await mutate('homeData');
+      router.replace('/(tabs)/home');
+    } catch (err) {
+      console.error('[v0] Error leaving dorm:', err);
+      alert('Error removing dorm: ' + (err as unknown as Error).message);
+    }
   };
 
   useEffect(() => {
@@ -113,6 +139,16 @@ const SettingsScreen = () => {
 
           {/* Logout Button */}
           <View className="mt-6 rounded-3xl border border-red-900/50 bg-gray-800 px-5">
+            <SectionHeader title="Dangerous area" />
+            <SettingsItem
+              icon={Unplug}
+              label="Leave dorm"
+              description="Leave your dorm"
+              onPress={handleLeaveDorm}
+              showChevron={false}
+              destructive
+            />
+            <View className="h-px bg-gray-700" />
             <SettingsItem
               icon={LogOut}
               label="Log Out"

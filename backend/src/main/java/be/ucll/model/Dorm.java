@@ -100,6 +100,11 @@ public class Dorm {
         user.setDorm(this);
     }
 
+    public void removeUser(User user) {
+        this.users.remove(user);
+        user.setDorm(null);
+    }
+
     public void addTask(Task task) {
         this.tasks.add(task);
         task.setDorm(this);
