@@ -107,6 +107,27 @@ export default function DateInputField({
             }}
           />
         )}
+
+        {Platform.OS === 'web' && showPicker && (
+          <input
+            type="date"
+            value={value ? value.toISOString().substring(0, 10) : ''}
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value);
+              onChange(selectedDate);
+              onConfirm();
+              setShowPicker(false);
+            }}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              zIndex: 50,
+              width: '200px',
+              height: '40px',
+            }}
+          />
+        )}
       </View>
     </View>
   );

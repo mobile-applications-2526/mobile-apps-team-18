@@ -14,17 +14,15 @@ import { router } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import InputField from '../components/InputField';
 import DateInputField from '../components/DateInputField';
-import * as SecureStore from 'expo-secure-store';
 import useSWR, { mutate } from 'swr';
 import { Calendar, CheckSquare, FileText, MapPin, Sparkles } from 'lucide-react-native';
 import EventService from '../services/EventService';
 import TaskService from '../services/TaskService';
-import { TaskType } from '../types';
+import { Dorm, TaskType } from '../types';
 import { Picker } from '@react-native-picker/picker';
 
 const CreatorScreen = () => {
   const { auth } = useAuth();
-  const [dormCode, setDormCode] = useState<string>('');
 
   const [isEvent, setIsEvent] = useState(true);
 
@@ -42,20 +40,13 @@ const CreatorScreen = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { data: dorm } = useSWR(auth?.token ? 'homeData' : null);
+  const { data: dorm } = useSWR<Dorm>(auth?.token ? 'homeData' : null);
+
   const hasDorm = Boolean(
     dorm &&
       typeof dorm === 'object' &&
       (dorm.id || dorm.code || (Array.isArray(dorm.users) && dorm.users.length > 0))
   );
-
-  useEffect(() => {
-    const loadDormCode = async () => {
-      const storedCode = await SecureStore.getItemAsync('dormCode');
-      if (storedCode) setDormCode(storedCode);
-    };
-    loadDormCode();
-  }, []);
 
   const handleCreateEvent = async () => {
     if (!name.trim() || !eventDate) {
@@ -70,7 +61,7 @@ const CreatorScreen = () => {
       const formattedDate = eventDate.toISOString();
       await EventService.createEvent(
         auth.token,
-        dormCode,
+        dorm?.code!,
         name,
         formattedDate,
         location,
@@ -97,7 +88,14 @@ const CreatorScreen = () => {
     setLoading(true);
     try {
       const formattedDate = taskDate.toISOString();
-      await TaskService.createTask(auth.token, dormCode, title, formattedDate, type, taskDetails);
+      await TaskService.createTask(
+        auth.token,
+        dorm?.code!,
+        title,
+        formattedDate,
+        type,
+        taskDetails
+      );
       Alert.alert('Success!', 'Task created successfully 🎉');
       mutate('homeData');
       router.back();
@@ -129,6 +127,16 @@ const CreatorScreen = () => {
     { label: 'Kitchen', value: TaskType.KITCHEN },
     { label: 'Trash', value: TaskType.TRASH },
   ];
+
+  if (!hasDorm) {
+    return (
+      <View className="flex-1 items-center justify-center p-5">
+        <Text className="text-center text-lg text-gray-400">
+          You are not part of a dorm yet. Please join or create a dorm to use this feature.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
