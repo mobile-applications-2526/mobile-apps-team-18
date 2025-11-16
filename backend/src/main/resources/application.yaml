@@ -39,6 +39,10 @@ spring:
 jwt:
   secret-key: d2ViNC1ub3Qtc28tc2VjcmV0LWFjY2Vzcy1zZWNyZXQ=
 
+server:
+  address: 0.0.0.0
+  port: 8080
+
 cors:
   allowed-origins:
     - http://localhost

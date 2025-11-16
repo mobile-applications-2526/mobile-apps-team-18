@@ -42,6 +42,17 @@ export async function createDorm(token: string, name: string): Promise<Dorm> {
   return await handleJson(res);
 }
 
-const DormService = { getDorm, addUserToDormByCode, createDorm };
+export async function leaveDorm(token: string): Promise<Dorm> {
+  const res = await fetch(`${API_BASE}/dorms`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await handleJson(res);
+}
+
+const DormService = { getDorm, addUserToDormByCode, createDorm, leaveDorm };
 
 export default DormService;

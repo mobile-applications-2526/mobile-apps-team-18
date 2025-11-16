@@ -82,4 +82,18 @@ public class DormService {
         return dormRepository.findByCode(dormCode)
                 .orElseThrow(() -> new DormException("Dorm with code " + dormCode + " not found"));
     }
+
+    public void leaveDorm(Authentication authentication) {
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new DormException("User not found"));
+
+        Dorm dorm = dormRepository.findByUsers_Id(user.getId())
+                .orElseThrow(() -> new DormException("Dorm not found"));
+
+        dorm.removeUser(user);
+        dormRepository.save(dorm);
+        userRepository.save(user);
+    }
 }
