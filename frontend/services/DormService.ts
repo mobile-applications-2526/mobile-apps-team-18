@@ -1,7 +1,7 @@
 import { Dorm } from '../types';
 import { API_BASE, handleJson } from './apiClient';
 
-export async function getDorm(token: string): Promise<Dorm> {
+export async function getDorm(token: string): Promise<Dorm | null> {
   const url = `${API_BASE}/dorms`;
   const res = await fetch(url, {
     method: 'GET',
@@ -10,6 +10,11 @@ export async function getDorm(token: string): Promise<Dorm> {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
+
+  if (res.status === 204) {
+    return null;
+  }
+
   return handleJson<Dorm>(res);
 }
 
@@ -25,6 +30,18 @@ export async function addUserToDormByCode(token: string, code: string): Promise<
   return await handleJson(res);
 }
 
-const DormService = { getDorm, addUserToDormByCode };
+export async function createDorm(token: string, name: string): Promise<Dorm> {
+  const res = await fetch(`${API_BASE}/dorms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ name }),
+  });
+  return await handleJson(res);
+}
+
+const DormService = { getDorm, addUserToDormByCode, createDorm };
 
 export default DormService;

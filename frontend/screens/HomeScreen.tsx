@@ -4,33 +4,35 @@ import { useAuth } from '../context/AuthContext';
 import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
 import DormService from '../services/DormService';
-import type { Dorm } from '../types';
 import SectionHeader from '../components/SectionHeader';
 import { Check, X } from 'lucide-react-native';
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
 
 export const HomeScreen = () => {
-  const { auth, isLoading } = useAuth();
+  const { auth, isLoading: authLoading } = useAuth();
   const [code, setCode] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [isJoining, setIsJoining] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  const fetcher = async (): Promise<Dorm> => {
+  const fetcher = async () => {
     if (!auth?.token) throw new Error('No auth token');
-    const dormData = await DormService.getDorm(auth.token);
-    
-    if (dormData?.code) {
-      await SecureStore.setItemAsync('dormCode', dormData.code);
+    const dorm = await DormService.getDorm(auth.token);
+
+    if (!dorm) {
+      return null;
     }
-    
-    return dormData;
+
+    if (dorm?.code) {
+      await SecureStore.setItemAsync('dormCode', dorm.code);
+    }
+
+    return dorm;
   };
 
-  const {
-    data: dorm,
-    isLoading: dataLoading,
-    error,
-  } = useSWR(auth?.token ? 'homeData' : null, fetcher, { revalidateOnFocus: false });
+  const { data: dorm, isLoading: dormLoading } = useSWR(auth?.token ? 'homeData' : null, fetcher);
 
   const handleJoinDorm = async () => {
     if (!code || !code.trim()) {
@@ -42,6 +44,24 @@ export const HomeScreen = () => {
 
     if (response) {
       setCode('');
+      setIsJoining(false);
+      mutate('homeData', response, false);
+      mutate('homeData');
+    }
+  };
+
+  const handleCreateDorm = async () => {
+    if (!name || !name.trim()) {
+      Alert.alert('Missing Code', 'Please enter a dorm code before joining.');
+      return;
+    }
+
+    const response = await DormService.createDorm(auth?.token as string, name);
+
+    if (response) {
+      setName('');
+      setIsCreating(false);
+      mutate('homeData', response, false);
       mutate('homeData');
     }
   };
@@ -102,11 +122,10 @@ export const HomeScreen = () => {
     return marked;
   }, [dorm?.tasks, dorm?.events, selectedDate]);
 
-  if (isLoading) {
+  if (authLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-950">
-        <View className="h-12 w-12 rounded-full border-4 border-gray-700 border-t-emerald-500" />
-        <Text className="mt-4 text-gray-400">Loading...</Text>
+        <Text className="text-gray-400">Loading...</Text>
       </View>
     );
   }
@@ -119,38 +138,90 @@ export const HomeScreen = () => {
     );
   }
 
-  if (error || !dorm) {
+  if (dormLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-gray-950">
+        <Text className="text-gray-400">Loading dorm...</Text>
+      </View>
+    );
+  }
+
+  if (dorm === null) {
     return (
       <ScrollView contentContainerClassName="pt-6 pb-10" showsVerticalScrollIndicator={false}>
         <Text className="mb-6 px-6 text-3xl font-bold text-white">Homepage</Text>
-        <View className="mx-6 rounded-3xl border border-gray-700 bg-gray-800 p-6">
-          <View className="items-center">
-            <View className="mb-4 h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600">
+        <View className="flex flex-col gap-4">
+          <View className="mx-6 rounded-3xl border border-gray-700 bg-gray-800 p-6">
+            <View className="mb-4 h-16 w-16 items-center justify-center self-center rounded-2xl bg-emerald-600">
               <Text className="text-3xl">🏠</Text>
             </View>
             <Text className="mb-2 text-center text-xl font-bold text-white">
               You don't have a dorm yet
             </Text>
             <Text className="mb-6 text-center text-sm text-gray-400">
-              Enter your dorm code to get started
+              Would you like to join or create one?
             </Text>
 
-            <TextInput
-              placeholder="Enter dorm code"
-              placeholderTextColor="#6B7280"
-              className="mb-4 w-full rounded-2xl border border-gray-700 bg-gray-900 px-4 py-3 text-white"
-              value={code}
-              onChangeText={setCode}
-              autoCapitalize="characters"
-            />
+            {!isJoining && !isCreating && (
+              <View className="flex gap-8">
+                <Pressable
+                  onPress={() => setIsJoining(true)}
+                  className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
+                  accessibilityRole="button"
+                  accessibilityLabel="Join dorm">
+                  <Text className="text-center font-semibold text-white">Join Dorm</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setIsCreating(true)}
+                  className="flex-1 rounded-2xl bg-orange-400 px-4 py-3 active:opacity-80"
+                  accessibilityRole="button"
+                  accessibilityLabel="Create dorm">
+                  <Text className="text-center font-semibold text-white">Create dorm</Text>
+                </Pressable>
+              </View>
+            )}
 
-            <Pressable
-              onPress={handleJoinDorm}
-              className="w-full rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
-              accessibilityRole="button"
-              accessibilityLabel="Join dorm">
-              <Text className="text-center font-semibold text-white">Join Dorm</Text>
-            </Pressable>
+            {isJoining && (
+              <>
+                <TextInput
+                  placeholder="Enter dorm code"
+                  placeholderTextColor="#6B7280"
+                  className="mb-4 w-full rounded-2xl border border-gray-700 bg-gray-900 px-4 py-3 text-white"
+                  value={code}
+                  onChangeText={setCode}
+                  autoCapitalize="characters"
+                />
+
+                <Pressable
+                  onPress={handleJoinDorm}
+                  className="w-full rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
+                  accessibilityRole="button"
+                  accessibilityLabel="Join dorm">
+                  <Text className="text-center font-semibold text-white">Join Dorm</Text>
+                </Pressable>
+              </>
+            )}
+
+            {isCreating && (
+              <>
+                <TextInput
+                  placeholder="Enter the name of your dorm"
+                  placeholderTextColor="#6B7280"
+                  className="mb-4 w-full rounded-2xl border border-gray-700 bg-gray-900 px-4 py-3 text-white"
+                  value={name}
+                  onChangeText={setName}
+                  autoCapitalize="characters"
+                />
+
+                <Pressable
+                  onPress={handleCreateDorm}
+                  className="w-full rounded-2xl bg-orange-400 px-4 py-3 active:opacity-80"
+                  accessibilityRole="button"
+                  accessibilityLabel="Create dorm">
+                  <Text className="text-center font-semibold text-white">Create dorm</Text>
+                </Pressable>
+              </>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -160,7 +231,7 @@ export const HomeScreen = () => {
   return (
     <ScrollView contentContainerClassName="px-6 pt-6 pb-10" showsVerticalScrollIndicator={false}>
       <View className="mb-6 flex-row items-center justify-between">
-        <Text className="text-3xl font-bold text-white">{dorm.name}</Text>
+        <Text className="text-3xl font-bold text-white">{dorm?.name}</Text>
       </View>
 
       {/* Calendar Component */}

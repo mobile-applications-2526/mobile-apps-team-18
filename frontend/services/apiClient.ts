@@ -1,19 +1,12 @@
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 
 /**
  * Dynamically resolves API base URL for Expo (works in dev and prod).
  */
 function resolveApiBase() {
-  const isDev = process.env.EXPO_PUBLIC_DEV === 'true';
-
-  const hostUri =
-    (Constants as any)?.expoConfig?.hostUri || (Constants as any)?.manifest?.debuggerHost;
-
-  if (isDev && hostUri) {
-    const host = hostUri.split(':')[0];
-    return `http://${host}:8080`;
+  const isDev = __DEV__;
+  if (isDev) {
+    return process.env.DEV_API_BASE || 'http://localhost:8080';
   }
 
   return 'https://kotconnect-backend-team18-ekd9eefwh9gpdmcp.westeurope-01.azurewebsites.net';

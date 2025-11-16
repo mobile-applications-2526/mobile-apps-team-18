@@ -34,9 +34,7 @@ public class DormService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException("User not found"));
 
-        // Find the dorm that contains this user
-        return dormRepository.findByUsers_Id(user.getId())
-                .orElseThrow(() -> new DormException("Dorm not found for this user"));
+        return dormRepository.findByUsers_Id(user.getId()).orElse(null);
     }
 
     public Dorm addUserToDormByCode(Authentication authentication, DormCodeDTO dormCodeDTO) {

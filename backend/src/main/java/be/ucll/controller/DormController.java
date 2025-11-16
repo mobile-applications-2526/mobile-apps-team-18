@@ -8,6 +8,7 @@ import be.ucll.controller.dto.DormInputDTO;
 import be.ucll.model.Dorm;
 import be.ucll.service.DormService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,8 +25,12 @@ public class DormController {
     }
 
     @GetMapping()
-    public Dorm getAllDorms(Authentication authentication) {
-        return dormService.findDormForUser(authentication);
+    public ResponseEntity<Dorm> getAllDorms(Authentication authentication) {
+        Dorm dorm = dormService.findDormForUser(authentication);
+        if (dorm == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(dorm);
     }
 
     @PutMapping()
