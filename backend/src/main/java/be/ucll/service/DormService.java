@@ -75,7 +75,9 @@ public class DormService {
         dorm.setCode(code);
         dorm.addUser(user);
 
-        return dormRepository.save(dorm);
+        Dorm savedDorm = dormRepository.save(dorm);
+        userRepository.save(user);
+        return savedDorm;
     }
 
     public Dorm getDormByCode(String dormCode) {
