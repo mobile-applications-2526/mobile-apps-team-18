@@ -90,9 +90,15 @@ const CreatorScreen = () => {
       );
       setCelebration(true);
       setTimeout(() => {
-        Alert.alert('Success!', 'Event created successfully 🎉');
-        mutate('homeData');
-        router.back();
+        Alert.alert('Success!', 'Event created successfully 🎉', [
+          {
+            text: 'OK',
+            onPress: () => {
+              mutate('homeData');
+              router.back();
+            },
+          },
+        ]);
       }, 400);
     } catch (error: any) {
       Alert.alert('Error', error?.message || 'Failed to create event');
@@ -120,9 +126,15 @@ const CreatorScreen = () => {
       );
       setCelebration(true);
       setTimeout(() => {
-        Alert.alert('Success!', 'Task created successfully 🎉');
-        mutate('homeData');
-        router.back();
+        Alert.alert('Success!', 'Task created successfully 🎉', [
+          {
+            text: 'OK',
+            onPress: () => {
+              mutate('homeData');
+              router.back();
+            },
+          },
+        ]);
       }, 400);
     } catch (error: any) {
       Alert.alert('Error', error?.message || 'Failed to create task');
