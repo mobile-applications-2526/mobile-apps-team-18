@@ -8,8 +8,12 @@ import * as SecureStore from 'expo-secure-store';
 function resolveApiBase() {
   const isDev = process.env.EXPO_PUBLIC_DEV === 'true';
 
-  if (isDev) {
-    return 'http://localhost:8080';
+  const hostUri =
+    (Constants as any)?.expoConfig?.hostUri || (Constants as any)?.manifest?.debuggerHost;
+
+  if (isDev && hostUri) {
+    const host = hostUri.split(':')[0];
+    return `http://${host}:8080`;
   }
 
   return 'https://kotconnect-backend-team18-ekd9eefwh9gpdmcp.westeurope-01.azurewebsites.net';
