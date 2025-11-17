@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import HomeScreen from '../../screens/HomeScreen';
+import HomeScreen from '../../screens/home/HomeScreen';
 
 export default function HomeRoute() {
   return (

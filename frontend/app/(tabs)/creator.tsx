@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CreatorScreen from '../../screens/CreatorScreen';
+import CreatorScreen from '../../screens/creator/CreatorScreen';
 
 export default function CreatorRoute() {
   return (

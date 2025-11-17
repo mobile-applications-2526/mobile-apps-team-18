@@ -1,16 +1,16 @@
 import { View, Text, Pressable, TextInput, Alert, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
-import DormService from '../services/DormService';
-import SectionHeader from '../components/SectionHeader';
+import DormService from '../../services/DormService';
+import SectionHeader from '../../components/SectionHeader';
 import { Check, Plus, Unplug, X } from 'lucide-react-native';
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
-import TaskService from '../services/TaskService';
-import EventService from '../services/EventService';
-import { Dorm, Event, Task } from '../types';
+import TaskService from '../../services/TaskService';
+import EventService from '../../services/EventService';
+import { Dorm, Event, Task } from '../../types';
 
 export const HomeScreen = () => {
   const { auth, isLoading: authLoading } = useAuth();

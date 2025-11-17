@@ -11,9 +11,9 @@ import {
   Platform,
 } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../context/AuthContext';
-import InputField from '../components/InputField';
-import DateInputField from '../components/DateInputField';
+import { useAuth } from '../../context/AuthContext';
+import InputField from '../../components/InputField';
+import DateInputField from '../../components/DateInputField';
 import useSWR, { mutate } from 'swr';
 import {
   Calendar,
@@ -23,11 +23,11 @@ import {
   Sparkles,
   SquareCheck,
 } from 'lucide-react-native';
-import EventService from '../services/EventService';
-import TaskService from '../services/TaskService';
-import { Dorm, TaskType } from '../types';
-import CategoryPickerField from '../components/Picker';
-import Picker from '../components/Picker';
+import EventService from '../../services/EventService';
+import TaskService from '../../services/TaskService';
+import { Dorm, TaskType } from '../../types';
+import CategoryPickerField from '../../components/Picker';
+import Picker from '../../components/Picker';
 
 const CreatorScreen = () => {
   const { auth } = useAuth();
