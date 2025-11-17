@@ -165,7 +165,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
 
       {/* Description Card */}
       {event.description && (
-        <View className="mb-4 rounded-3xl border border-gray-700 bg-gray-800 p-6">
+        <View className="rounded-3xl border border-gray-700 bg-gray-800 p-6">
           <Text className="mb-3 text-lg font-semibold text-white">Beschrijving</Text>
           <Text className="text-base leading-relaxed text-gray-300">{event.description}</Text>
         </View>
@@ -173,7 +173,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
 
       {/* Participants Card */}
       {event.participants && event.participants.length > 0 && (
-        <View className="mb-6 rounded-3xl border border-gray-700 bg-gray-800 p-6">
+        <View className="mt-4 rounded-3xl border border-gray-700 bg-gray-800 p-6">
           <View className="mb-4 flex-row items-center">
             <View className="mr-3 h-8 w-8 items-center justify-center rounded-lg bg-emerald-600/20">
               <Users size={16} color="#10B981" />
@@ -205,20 +205,23 @@ export default function EventOverviewScreen({ eventId }: Props) {
       )}
 
       {/* Join/Leave Button */}
-      <Pressable
-        onPress={handleJoinLeave}
-        className={`items-center rounded-3xl px-6 py-4 active:opacity-80 ${
-          isJoined ? 'bg-red-600' : 'bg-emerald-600'
-        }`}
-        accessibilityRole="button"
-        accessibilityLabel={isJoined ? 'Leave event' : 'Join event'}>
-        <Text className="text-lg font-semibold text-white">
-          {isJoined ? 'Verlaat Evenement' : 'Doe Mee'}
-        </Text>
-      </Pressable>
+      {!isOrganizer && (
+        <Pressable
+          onPress={handleJoinLeave}
+          className={`mt-4 items-center rounded-3xl px-6 py-4 active:opacity-80 ${
+            isOrganizer ? 'bg-gray-600' : isJoined ? 'bg-red-600' : 'bg-emerald-600'
+          }`}
+          accessibilityRole="button"
+          disabled={isOrganizer}
+          accessibilityLabel={isJoined ? 'Leave event' : 'Join event'}>
+          <Text className="text-lg font-semibold text-white">
+            {isOrganizer ? 'This is your event' : isJoined ? 'Verlaat Evenement' : 'Doe Mee'}
+          </Text>
+        </Pressable>
+      )}
 
       {/* Footer Info */}
-      <View className="mt-6 rounded-2xl border border-gray-700 bg-gray-800 p-4">
+      <View className="mt-4 rounded-2xl border border-gray-700 bg-gray-800 p-4">
         <Text className="text-center text-sm text-gray-400">
           {isOrganizer
             ? 'Als organisator kun je dit evenement beheren'

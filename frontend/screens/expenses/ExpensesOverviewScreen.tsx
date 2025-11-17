@@ -30,7 +30,11 @@ export default function ExpensesOverviewScreen() {
     return ExpenseService.getExpenses(auth.token, dorm.id);
   };
 
-  const { data: expenses, isValidating, error } = useSWR(key, fetcher);
+  const { data: fetchedExpenses, isValidating, error } = useSWR(key, fetcher);
+
+  const expenses = fetchedExpenses?.filter((expense) =>
+    expense.shares?.some((share: any) => share.user?.username === auth.username)
+  );
 
   if (!auth)
     return (
