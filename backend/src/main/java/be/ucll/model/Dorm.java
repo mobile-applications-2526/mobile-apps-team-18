@@ -39,6 +39,10 @@ public class Dorm {
     @JsonManagedReference
     private List<Event> events = new ArrayList<>();
 
+    @OneToMany(mappedBy = "dorm")
+    @JsonManagedReference
+    private List<Expense> expenses = new ArrayList<>();
+
     protected Dorm() {
     }
 
