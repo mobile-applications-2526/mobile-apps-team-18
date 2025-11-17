@@ -194,7 +194,6 @@ export const HomeScreen = () => {
                   className="mb-4 w-full rounded-2xl border border-gray-700 bg-gray-900 px-4 py-3 text-white"
                   value={code}
                   onChangeText={setCode}
-                  autoCapitalize="characters"
                 />
 
                 <View className="flex w-full flex-row items-center gap-2">
@@ -224,7 +223,6 @@ export const HomeScreen = () => {
                   className="mb-4 w-full rounded-2xl border border-gray-700 bg-gray-900 px-4 py-3 text-white"
                   value={name}
                   onChangeText={setName}
-                  autoCapitalize="characters"
                 />
                 <View className="flex w-full flex-row items-center gap-2">
                   <Pressable
