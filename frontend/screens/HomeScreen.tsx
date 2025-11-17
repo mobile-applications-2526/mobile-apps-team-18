@@ -5,7 +5,7 @@ import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
 import DormService from '../services/DormService';
 import SectionHeader from '../components/SectionHeader';
-import { ArrowLeft, Check, X } from 'lucide-react-native';
+import { Check, X } from 'lucide-react-native';
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
 
