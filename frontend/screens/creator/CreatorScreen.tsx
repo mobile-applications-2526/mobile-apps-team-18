@@ -47,7 +47,7 @@ const CreatorScreen = () => {
   const [taskDate, setTaskDate] = useState<Date | null>(null);
   const [type, setType] = useState<TaskType | undefined>(undefined);
 
-  const [assignedUser, setAssignedUser] = useState<string | null>(null);
+  const [assignedUser, setAssignedUser] = useState<number | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -121,7 +121,8 @@ const CreatorScreen = () => {
         title,
         formattedDate,
         type!,
-        taskDetails
+        taskDetails,
+        assignedUser!
       );
       Alert.alert('Success!', 'Task created successfully 🎉');
       mutate('homeData');
@@ -155,144 +156,147 @@ const CreatorScreen = () => {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}>
-      <ScrollView className="px-6 py-6" contentContainerStyle={{ paddingBottom: 140 }}>
-        <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-3xl font-bold text-white">Creator</Text>
-          <View className="items-center justify-center rounded-full bg-emerald-500/20 p-2">
-            <Sparkles color="#10b981" size={20} />
+    <View style={{ flex: 1 }} className="relative">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}>
+        <ScrollView className="px-6 py-6" contentContainerStyle={{ paddingBottom: 140 }}>
+          <View className="mb-3 flex-row items-center justify-between">
+            <Text className="text-3xl font-bold text-white">Creator</Text>
+            <View className="items-center justify-center rounded-full bg-emerald-500/20 p-2">
+              <Sparkles color="#10b981" size={20} />
+            </View>
           </View>
-        </View>
 
-        <View className="mb-4 flex-row gap-2 rounded-2xl border border-gray-700 bg-gray-800/50 p-1.5">
-          <Pressable
-            onPress={() => {
-              setIsEvent(true);
-            }}
-            className={`flex-1 items-center justify-center rounded-lg py-2.5 ${
-              isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
-            }`}>
-            <View className="flex-row items-center justify-center gap-1.5">
-              <Calendar color={isEvent ? '#ffffff' : '#9CA3AF'} size={16} />
-              <Text className={`text-sm font-semibold ${isEvent ? 'text-white' : 'text-gray-400'}`}>
-                Event
-              </Text>
-            </View>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              setIsEvent(false);
-            }}
-            className={`flex-1 items-center justify-center rounded-lg py-2.5 ${
-              !isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
-            }`}>
-            <View className="flex-row items-center justify-center gap-1.5">
-              <CheckSquare color={!isEvent ? '#ffffff' : '#9CA3AF'} size={16} />
-              <Text
-                className={`text-sm font-semibold ${!isEvent ? 'text-white' : 'text-gray-400'}`}>
-                Task
-              </Text>
-            </View>
-          </Pressable>
-        </View>
+          <View className="mb-4 flex-row gap-2 rounded-2xl border border-gray-700 bg-gray-800/50 p-1.5">
+            <Pressable
+              onPress={() => {
+                setIsEvent(true);
+              }}
+              className={`flex-1 items-center justify-center rounded-lg py-2.5 ${
+                isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
+              }`}>
+              <View className="flex-row items-center justify-center gap-1.5">
+                <Calendar color={isEvent ? '#ffffff' : '#9CA3AF'} size={16} />
+                <Text
+                  className={`text-sm font-semibold ${isEvent ? 'text-white' : 'text-gray-400'}`}>
+                  Event
+                </Text>
+              </View>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setIsEvent(false);
+              }}
+              className={`flex-1 items-center justify-center rounded-lg py-2.5 ${
+                !isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
+              }`}>
+              <View className="flex-row items-center justify-center gap-1.5">
+                <CheckSquare color={!isEvent ? '#ffffff' : '#9CA3AF'} size={16} />
+                <Text
+                  className={`text-sm font-semibold ${!isEvent ? 'text-white' : 'text-gray-400'}`}>
+                  Task
+                </Text>
+              </View>
+            </Pressable>
+          </View>
 
-        {isEvent ? (
-          <>
-            <InputField
-              label="Event Name"
-              value={name}
-              onChangeText={setName}
-              placeholder="Event Name"
-              icon={FileText}
-              onBlur={() => {}}
-              loading={false}
-            />
-            <DateInputField
-              label="Date"
-              value={eventDate}
-              onChange={setEventDate}
-              icon={Calendar}
-              placeholder="Select date"
-              onConfirm={() => {}}
-            />
-            <InputField
-              label="Location"
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Location"
-              icon={MapPin}
-              onBlur={() => {}}
-              loading={false}
-            />
-            <InputField
-              label="Description"
-              value={eventDescription}
-              onChangeText={setEventDescription}
-              placeholder="Description"
-              icon={FileText}
-              onBlur={() => {}}
-              loading={false}
-            />
-          </>
-        ) : (
-          <>
-            <InputField
-              label="Task Title"
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Task Title"
-              icon={FileText}
-              onBlur={() => {}}
-              loading={false}
-            />
-            <DateInputField
-              label="Due Date"
-              value={taskDate}
-              onChange={setTaskDate}
-              icon={Calendar}
-              placeholder="Select due date"
-              onConfirm={() => {}}
-            />
-            <InputField
-              label="Details"
-              value={taskDetails}
-              onChangeText={setTaskDetails}
-              placeholder="Details"
-              icon={FileText}
-              onBlur={() => {}}
-              loading={false}
-            />
-            <Picker
-              icon={SquareCheck}
-              label={'Task type'}
-              value={type}
-              onChange={setType}
-              items={taskTypes}
-              placeholder="Select a type..."
-            />
-            <Picker
-              icon={User}
-              label="Assign to"
-              value={assignedUser}
-              onChange={setAssignedUser}
-              items={users}
-              placeholder="Assign a user..."
-            />
-          </>
-        )}
-      </ScrollView>
-      <FloatingButton
-        onPress={isEvent ? handleCreateEvent : handleCreateTask}
-        icon={Sparkles}
-        color={'#fff'}
-        title={`Create ${isEvent ? 'Event' : 'Task'}`}
-        backgroundColor={isFormValid ? '#10B981' : '#9ba0a8'}
-        disabled={loading || !isFormValid}
-        loading={loading}
-      />
-    </KeyboardAvoidingView>
+          {isEvent ? (
+            <>
+              <InputField
+                label="Event Name"
+                value={name}
+                onChangeText={setName}
+                placeholder="Event Name"
+                icon={FileText}
+                onBlur={() => {}}
+                loading={false}
+              />
+              <DateInputField
+                label="Date"
+                value={eventDate}
+                onChange={setEventDate}
+                icon={Calendar}
+                placeholder="Select date"
+                onConfirm={() => {}}
+              />
+              <InputField
+                label="Location"
+                value={location}
+                onChangeText={setLocation}
+                placeholder="Location"
+                icon={MapPin}
+                onBlur={() => {}}
+                loading={false}
+              />
+              <InputField
+                label="Description"
+                value={eventDescription}
+                onChangeText={setEventDescription}
+                placeholder="Description"
+                icon={FileText}
+                onBlur={() => {}}
+                loading={false}
+              />
+            </>
+          ) : (
+            <>
+              <InputField
+                label="Task Title"
+                value={title}
+                onChangeText={setTitle}
+                placeholder="Task Title"
+                icon={FileText}
+                onBlur={() => {}}
+                loading={false}
+              />
+              <DateInputField
+                label="Due Date"
+                value={taskDate}
+                onChange={setTaskDate}
+                icon={Calendar}
+                placeholder="Select due date"
+                onConfirm={() => {}}
+              />
+              <InputField
+                label="Details"
+                value={taskDetails}
+                onChangeText={setTaskDetails}
+                placeholder="Details"
+                icon={FileText}
+                onBlur={() => {}}
+                loading={false}
+              />
+              <Picker
+                icon={SquareCheck}
+                label={'Task type'}
+                value={type}
+                onChange={setType}
+                items={taskTypes}
+                placeholder="Select a type..."
+              />
+              <Picker
+                icon={User}
+                label="Assign to"
+                value={assignedUser}
+                onChange={setAssignedUser}
+                items={users}
+                placeholder="Assign a user..."
+              />
+            </>
+          )}
+        </ScrollView>
+        <FloatingButton
+          onPress={isEvent ? handleCreateEvent : handleCreateTask}
+          icon={Sparkles}
+          color={'#fff'}
+          title={`Create ${isEvent ? 'Event' : 'Task'}`}
+          backgroundColor={isFormValid ? '#10B981' : '#9ba0a8'}
+          disabled={loading || !isFormValid}
+          loading={loading}
+        />
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

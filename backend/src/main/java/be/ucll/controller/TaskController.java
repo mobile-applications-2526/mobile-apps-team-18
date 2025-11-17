@@ -40,10 +40,11 @@ public class TaskController {
         return taskService.getAllTasks();
     }
 
-    @PostMapping("/{dormCode}")
-    public Task createTask(@PathVariable String dormCode, @Valid @RequestBody TaskDTO taskDTO,
+    @PostMapping("/{dormCode}/{assignedUserId}")
+    public Task createTask(@PathVariable String dormCode, @PathVariable Long assignedUserId,
+            @Valid @RequestBody TaskDTO taskDTO,
             Authentication authentication) {
-        return taskService.createTask(dormCode, taskDTO, authentication);
+        return taskService.createTask(dormCode, assignedUserId, taskDTO, authentication);
     }
 
     @DeleteMapping("/{id}")

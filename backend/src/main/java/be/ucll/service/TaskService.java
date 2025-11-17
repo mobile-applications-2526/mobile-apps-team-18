@@ -41,11 +41,19 @@ public class TaskService {
         return taskRepository.findByDormId(dormId);
     }
 
-    public Task createTask(String dormCode, TaskDTO taskDTO, Authentication authentication) {
+    public Task createTask(String dormCode, Long assignedUserId, TaskDTO taskDTO, Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UserException("User not found"));
 
+        User assigneduser = userRepository.findById(assignedUserId)
+                .orElseThrow(() -> new UserException("AssignedUser not found"));
+
         Dorm dorm = dormRepository.findByCode(dormCode).orElseThrow(() -> new UserException("Dorm not found"));
+
+        if (!dorm.getUsers().contains(assigneduser)) {
+            throw new Error("User not in this dorm");
+        }
+
         Task task = new Task(
                 taskDTO.title(),
                 taskDTO.description(),
@@ -53,7 +61,7 @@ public class TaskService {
                 taskDTO.date());
 
         task.setCreatedBy(user);
-        task.setAssignedUser(user);
+        task.setAssignedUser(assigneduser);
 
         if (!dorm.getUsers().contains(user)) {
             throw new TaskException("User is not authorized to create tasks for this dorm");

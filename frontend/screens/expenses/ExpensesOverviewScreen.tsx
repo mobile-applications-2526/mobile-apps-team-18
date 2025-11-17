@@ -82,7 +82,7 @@ export default function ExpensesOverviewScreen() {
     }, 0) || 0;
 
   return (
-    <>
+    <View style={{ flex: 1 }} className="relative">
       <ScrollView contentContainerClassName="px-6 pt-6 pb-36" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="mb-6 flex-row items-center">
@@ -196,6 +196,6 @@ export default function ExpensesOverviewScreen() {
         color="#fff"
         backgroundColor="#059669"
       />
-    </>
+    </View>
   );
 }

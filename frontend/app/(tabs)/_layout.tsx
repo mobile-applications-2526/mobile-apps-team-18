@@ -29,10 +29,11 @@ export default function TabsLayout() {
           <Icon sf={'gear'} drawable="ic_account_circle" />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="creator" hidden={!hasDorm}>
+        <NativeTabs.Trigger name="creator" role="search" hidden={!hasDorm}>
           <Label>Add</Label>
           <Icon sf={'plus'} drawable="ic_menu_add" />
         </NativeTabs.Trigger>
+
         <NativeTabs.Trigger name="expenses" hidden={!hasDorm}>
           <Label>Expenses</Label>
           <Icon sf={'dollarsign.circle'} drawable="ic_menu_expenses" />

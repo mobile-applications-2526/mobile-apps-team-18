@@ -7,9 +7,10 @@ export async function createTask(
   title: string,
   date: string,
   type: TaskType,
-  description: string
+  description: string,
+  assignedUserId: number
 ): Promise<any> {
-  const res = await fetch(`${API_BASE}/tasks/${dormCode}`, {
+  const res = await fetch(`${API_BASE}/tasks/${dormCode}/${assignedUserId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

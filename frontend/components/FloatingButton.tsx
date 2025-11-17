@@ -22,7 +22,7 @@ export default function FloatingButton({
   loading,
 }: Props) {
   return (
-    <View className="absolute bottom-28 left-6 right-6">
+    <View className="absolute bottom-20 left-6 right-6">
       <Pressable
         disabled={disabled}
         onPress={onPress}
