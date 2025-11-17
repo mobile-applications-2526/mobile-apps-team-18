@@ -5,12 +5,13 @@ import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
 import DormService from '../../services/DormService';
 import SectionHeader from '../../components/SectionHeader';
-import { Check, Plus, Unplug, X } from 'lucide-react-native';
+import { Check, ChevronRight, Plus, Unplug, X } from 'lucide-react-native';
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
 import TaskService from '../../services/TaskService';
 import EventService from '../../services/EventService';
 import { Dorm, Event, Task } from '../../types';
+import { router } from 'expo-router';
 
 export const HomeScreen = () => {
   const { auth, isLoading: authLoading } = useAuth();
@@ -105,31 +106,9 @@ export const HomeScreen = () => {
     }
   };
 
-  const handleJoinEvent = async (eventId: number) => {
-    if (!auth?.token) return;
-
-    try {
-      const response = await EventService.joinEvent(auth.token, eventId);
-
-      if (response) {
-        mutate(
-          'homeData',
-          (currentData?: Dorm) => {
-            if (!currentData || !currentData.events) return currentData;
-
-            return {
-              ...currentData,
-              events: currentData.events.map((event: Event) =>
-                event.id === eventId ? { ...event, ...response } : event
-              ),
-            };
-          },
-          false
-        );
-      }
-    } catch (err) {
-      alert('Error: ' + err);
-    }
+  const handleEventPress = (eventId?: number | string) => {
+    if (!eventId) return;
+    router.push(`/event/${eventId}`);
   };
 
   const selectedDayLabel = useMemo(() => {
@@ -388,10 +367,18 @@ export const HomeScreen = () => {
               const isJoined = event.participants?.some((u) => u.username === auth.username);
 
               return (
-                <View key={event.id} className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
+                <Pressable
+                  key={event.id}
+                  onPress={() => handleEventPress(event.id)}
+                  className="rounded-2xl border border-gray-700 bg-gray-900 p-4 active:bg-gray-800">
                   <View className="flex-row items-start justify-between gap-3">
                     <View className="flex-1">
-                      <Text className="mb-2 text-base font-semibold text-white">{event.name}</Text>
+                      <View className="mb-2 flex-row items-center justify-between">
+                        <Text className="flex-1 text-base font-semibold text-white">
+                          {event.name}
+                        </Text>
+                        <ChevronRight size={20} color="#9ca3af" />
+                      </View>
                       <View className="flex-row items-center gap-2">
                         <View className="rounded-full bg-purple-600/20 px-3 py-1">
                           <Text className="text-xs font-medium text-purple-400">Evenement</Text>
@@ -401,18 +388,15 @@ export const HomeScreen = () => {
                       {event.location && (
                         <Text className="mt-2 text-xs text-gray-500">📍 {event.location}</Text>
                       )}
+                      {isJoined && (
+                        <View className="mt-2 flex-row items-center gap-1">
+                          <View className="h-2 w-2 rounded-full bg-emerald-500" />
+                          <Text className="text-xs text-emerald-500">Je neemt deel</Text>
+                        </View>
+                      )}
                     </View>
-                    <Pressable
-                      onPress={() => handleJoinEvent(event.id)}
-                      className={`rounded-lg px-4 py-2 ${
-                        isJoined ? 'bg-red-600' : 'bg-emerald-600'
-                      } active:opacity-80`}>
-                      <Text className="font-semibold text-white">
-                        {isJoined ? 'Leave' : 'Join'}
-                      </Text>
-                    </Pressable>
                   </View>
-                </View>
+                </Pressable>
               );
             })}
           </View>

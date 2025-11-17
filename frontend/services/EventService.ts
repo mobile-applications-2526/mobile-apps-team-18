@@ -31,6 +31,17 @@ export async function joinEvent(token: string, eventId: number): Promise<Event> 
   return await handleJson(res);
 }
 
-const EventService = { createEvent, joinEvent };
+export async function getById(token: string, eventId: number): Promise<Event> {
+  const res = await fetch(`${API_BASE}/events/${eventId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return await handleJson(res);
+}
+
+const EventService = { createEvent, joinEvent, getById };
 
 export default EventService;
