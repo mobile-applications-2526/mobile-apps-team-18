@@ -1,6 +1,5 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CreatorScreen from '../../screens/CreatorScreen';
 import ExpensesOverviewScreen from '../../screens/expenses/ExpensesOverviewScreen';
 
 export default function ExpensesRoute() {
