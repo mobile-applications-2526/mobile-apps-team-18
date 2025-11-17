@@ -9,6 +9,8 @@ import be.ucll.model.Dorm;
 import be.ucll.model.Event;
 import be.ucll.model.Task;
 import be.ucll.model.User;
+import be.ucll.model.Expense;
+import be.ucll.model.ExpenseShare;
 import be.ucll.types.TaskType;
 import jakarta.annotation.PostConstruct;
 
@@ -19,18 +21,24 @@ public class DbInitializer {
         private final EventRepository eventRepository;
         private final TaskRepository taskRepository;
         private final DormRepository dormRepository;
+        private final ExpenseRepository expenseRepository;
+        private final ExpenseShareRepository expenseShareRepository;
 
         public DbInitializer(
                         PasswordEncoder passwordEncoder,
                         UserRepository userRepository,
                         EventRepository eventRepository,
                         TaskRepository taskRepository,
-                        DormRepository dormRepository) {
+                        DormRepository dormRepository,
+                        ExpenseRepository expenseRepository,
+                        ExpenseShareRepository expenseShareRepository) {
                 this.passwordEncoder = passwordEncoder;
                 this.userRepository = userRepository;
                 this.eventRepository = eventRepository;
                 this.taskRepository = taskRepository;
                 this.dormRepository = dormRepository;
+                this.expenseRepository = expenseRepository;
+                this.expenseShareRepository = expenseShareRepository;
         }
 
         public void clearAll() {
@@ -63,6 +71,7 @@ public class DbInitializer {
                 // Add users to dorms
                 blijdeInkom.addUser(nathan);
                 blijdeInkom.addUser(rajo);
+                blijdeInkom.addUser(sander);
 
                 // --- TASKS ---
                 Task task1 = new Task("Vacuum the living room", "Use the Dyson in the closet", TaskType.CLEANING,
@@ -124,6 +133,33 @@ public class DbInitializer {
                 blijdeInkom.addEvent(event2);
                 tiensestraat.addEvent(event3);
 
+
+                // EXPENSES AND EXPENSE SHARES
+                Expense groceries = new Expense("Groceries",  92.50, nathan);
+                groceries.setDorm(blijdeInkom);
+                ExpenseShare g1 = new ExpenseShare(nathan, 30.83);
+                ExpenseShare g2 = new ExpenseShare(rajo, 30.83);
+                ExpenseShare g3 = new ExpenseShare(sander, 30.84);
+                groceries.addShare(g1);
+                groceries.addShare(g2);
+                groceries.addShare(g3);
+
+                // Utility bill shared between two users
+                Expense utilities = new Expense("Utilities",  68.50, rajo);
+                utilities.setDorm(blijdeInkom);
+                ExpenseShare u1 = new ExpenseShare(nathan, 34.25);
+                ExpenseShare u2 = new ExpenseShare(rajo, 34.25);
+                utilities.addShare(u1);
+                utilities.addShare(u2);
+
+                // Small pizza order for movie night (two participants)
+                Expense pizza = new Expense("Pizza Night", 24.0, rajo);
+                pizza.setDorm(blijdeInkom);
+                ExpenseShare p1 = new ExpenseShare(rajo, 12.0);
+                ExpenseShare p2 = new ExpenseShare(nathan, 12.0);
+                pizza.addShare(p1);
+                pizza.addShare(p2);
+
                 // --- SAVE DORMS (cascade will save tasks/events) ---
                 dormRepository.save(blijdeInkom);
                 dormRepository.save(tiensestraat);
@@ -142,6 +178,20 @@ public class DbInitializer {
                 userRepository.save(nathan);
                 userRepository.save(rajo);
                 userRepository.save(sander);
+
+                // Save expenses (shares should cascade if model configured; otherwise repository saves)
+                expenseRepository.save(groceries);
+                expenseRepository.save(utilities);
+                expenseRepository.save(pizza);
+
+                // Optionally save shares explicitly if cascade is not configured
+                expenseShareRepository.save(g1);
+                expenseShareRepository.save(g2);
+                expenseShareRepository.save(g3);
+                expenseShareRepository.save(u1);
+                expenseShareRepository.save(u2);
+                expenseShareRepository.save(p1);
+                expenseShareRepository.save(p2);
 
         }
 }

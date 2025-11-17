@@ -226,4 +226,9 @@ public class UserService {
                 .orElseThrow(() -> new UserException("User " + username + " not found"));
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserException("User with id " + id + " not found"));
+    }
+
 }

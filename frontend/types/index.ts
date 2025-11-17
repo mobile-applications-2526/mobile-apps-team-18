@@ -70,4 +70,20 @@ export enum TaskType {
   KITCHEN,
   COOKING,
   GROCERIES,
-}
+};
+
+export type ExpenseShare = {
+  id?: number;
+  user?: User;
+  amount?: number;
+  paid?: boolean;
+};
+
+export type Expense = {
+  id?: number;
+  title?: string;
+  totalAmount?: number;
+  creator?: User;
+  dorm?: Dorm;
+  shares?: ExpenseShare[];
+};
