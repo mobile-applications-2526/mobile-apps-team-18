@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput, Alert, ScrollView } from 'react-native';
+import { View, Text, Pressable, TextInput, Alert, ScrollView, Platform } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useAuth } from '../../context/AuthContext';
 import useSWR, { mutate } from 'swr';
@@ -30,7 +30,11 @@ export const HomeScreen = () => {
     }
 
     if (dorm?.code) {
-      await SecureStore.setItemAsync('dormCode', dorm.code);
+      if (Platform.OS === 'web') {
+        localStorage.setItem('dormCode', dorm.code);
+      } else {
+        await SecureStore.setItemAsync('dormCode', dorm.code);
+      }
     }
 
     return dorm;
@@ -359,7 +363,7 @@ export const HomeScreen = () => {
           <View className="gap-3 pb-5">
             {filteredTasks.map((task) => (
               <View key={task.id} className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
-                <View className="mb-3 flex-row items-start justify-between gap-3">
+                <View className="flex-row items-start justify-between gap-3">
                   <View className="flex-1">
                     <Text className="mb-2 text-base font-semibold text-white">{task.title}</Text>
                     <View className="flex-row items-center gap-2">
@@ -385,7 +389,7 @@ export const HomeScreen = () => {
 
               return (
                 <View key={event.id} className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
-                  <View className="mb-3 flex-row items-start justify-between gap-3">
+                  <View className="flex-row items-start justify-between gap-3">
                     <View className="flex-1">
                       <Text className="mb-2 text-base font-semibold text-white">{event.name}</Text>
                       <View className="flex-row items-center gap-2">
