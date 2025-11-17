@@ -31,14 +31,14 @@ export default function InputField({
   const isEmpty = !value || !value.trim();
 
   return (
-    <View className="mb-4 overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
-      <View className="p-5">
-        <View className="mb-3 flex-row items-center">
+    <View className="mb-2 overflow-hidden rounded-2xl border border-gray-700 bg-gray-800">
+      <View className="p-3">
+        <View className="mb-2 flex-row items-center">
           <View
-            className={`mr-4 h-12 w-12 items-center justify-center rounded-2xl ${
+            className={`mr-3 h-9 w-9 items-center justify-center rounded-lg ${
               isEmpty ? 'bg-gray-700' : 'bg-emerald-600/20'
             }`}>
-            <Icon color={isEmpty ? '#9CA3AF' : '#10B981'} size={22} />
+            <Icon color={isEmpty ? '#9CA3AF' : '#10B981'} size={18} />
           </View>
 
           <Text className="flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">
@@ -47,13 +47,13 @@ export default function InputField({
 
           {loading && <ActivityIndicator size="small" color="#10B981" />}
           {!loading && success && (
-            <View className="rounded-full bg-emerald-600/20 p-1">
-              <CheckCircle color="#10B981" size={24} strokeWidth={2.5} />
+            <View className="rounded-full bg-emerald-600/20 p-0.5">
+              <CheckCircle color="#10B981" size={20} strokeWidth={2.5} />
             </View>
           )}
           {!loading && error && (
-            <View className="rounded-full bg-red-600/20 p-1">
-              <XCircle color="#EF4444" size={24} strokeWidth={2.5} />
+            <View className="rounded-full bg-red-600/20 p-0.5">
+              <XCircle color="#EF4444" size={20} strokeWidth={2.5} />
             </View>
           )}
         </View>
@@ -66,7 +66,7 @@ export default function InputField({
           placeholderTextColor="#6B7280"
           keyboardType={keyboardType}
           autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
-          className="rounded-2xl border border-gray-600 bg-gray-900 px-5 py-4 text-base text-white"
+          className="rounded-lg border border-gray-600 bg-gray-900 px-3 py-2.5 text-base text-white"
           {...rest}
         />
       </View>

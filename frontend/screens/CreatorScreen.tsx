@@ -15,15 +15,22 @@ import { useAuth } from '../context/AuthContext';
 import InputField from '../components/InputField';
 import DateInputField from '../components/DateInputField';
 import useSWR, { mutate } from 'swr';
-import { Calendar, CheckSquare, FileText, MapPin, Sparkles } from 'lucide-react-native';
+import {
+  Calendar,
+  CheckSquare,
+  FileText,
+  MapPin,
+  Sparkles,
+  SquareCheck,
+} from 'lucide-react-native';
 import EventService from '../services/EventService';
 import TaskService from '../services/TaskService';
 import { Dorm, TaskType } from '../types';
-import { Picker } from '@react-native-picker/picker';
+import CategoryPickerField from '../components/Picker';
+import Picker from '../components/Picker';
 
 const CreatorScreen = () => {
   const { auth } = useAuth();
-
   const [isEvent, setIsEvent] = useState(true);
 
   // Event fields
@@ -36,9 +43,19 @@ const CreatorScreen = () => {
   const [title, setTitle] = useState('');
   const [taskDetails, setTaskDetails] = useState('');
   const [taskDate, setTaskDate] = useState<Date | null>(null);
-  const [type, setType] = useState<TaskType>(TaskType.CLEANING);
+  const [type, setType] = useState<TaskType | undefined>(undefined);
 
   const [loading, setLoading] = useState(false);
+
+  const taskTypes = [
+    { label: 'Cleaning', value: TaskType.CLEANING },
+    { label: 'Bathroom', value: TaskType.BATHROOM },
+    { label: 'Cooking', value: TaskType.COOKING },
+    { label: 'Groceries', value: TaskType.GROCERIES },
+    { label: 'Dishes', value: TaskType.DISHES },
+    { label: 'Kitchen', value: TaskType.KITCHEN },
+    { label: 'Trash', value: TaskType.TRASH },
+  ];
 
   const { data: dorm } = useSWR<Dorm>(auth?.token ? 'homeData' : null);
 
@@ -93,7 +110,7 @@ const CreatorScreen = () => {
         dorm?.code!,
         title,
         formattedDate,
-        type,
+        type!,
         taskDetails
       );
       Alert.alert('Success!', 'Task created successfully 🎉');
@@ -115,18 +132,7 @@ const CreatorScreen = () => {
   const isTaskFormValid =
     title.trim().length > 0 && taskDate !== null && taskDetails.trim().length > 0 && type !== null;
 
-  // Use the proper one depending on the form
   const isFormValid = isEvent ? isEventFormValid : isTaskFormValid;
-
-  const taskTypes = [
-    { label: 'Cleaning', value: TaskType.CLEANING },
-    { label: 'Bathroom', value: TaskType.BATHROOM },
-    { label: 'Cooking', value: TaskType.COOKING },
-    { label: 'Groceries', value: TaskType.GROCERIES },
-    { label: 'Dishes', value: TaskType.DISHES },
-    { label: 'Kitchen', value: TaskType.KITCHEN },
-    { label: 'Trash', value: TaskType.TRASH },
-  ];
 
   if (!hasDorm) {
     return (
@@ -142,24 +148,25 @@ const CreatorScreen = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
-        <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-3xl font-bold text-white">Creator</Text>
-          <View className="items-center justify-center rounded-full bg-emerald-500/20 p-3">
-            <Sparkles color="#10b981" size={24} />
+      <ScrollView contentContainerStyle={{ padding: 12 }}>
+        <View className="mb-3 flex-row items-center justify-between">
+          <Text className="text-2xl font-bold text-white">Creator</Text>
+          <View className="items-center justify-center rounded-full bg-emerald-500/20 p-2">
+            <Sparkles color="#10b981" size={20} />
           </View>
         </View>
-        <View className="mb-6 flex-row gap-3 rounded-3xl border border-gray-700 bg-gray-800/50 p-2">
+
+        <View className="mb-4 flex-row gap-2 rounded-2xl border border-gray-700 bg-gray-800/50 p-1.5">
           <Pressable
             onPress={() => {
               setIsEvent(true);
             }}
-            className={`flex-1 items-center justify-center rounded-2xl py-3 ${
+            className={`flex-1 items-center justify-center rounded-lg py-2.5 ${
               isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
             }`}>
-            <View className="flex-row items-center justify-center gap-2">
-              <Calendar color={isEvent ? '#ffffff' : '#9CA3AF'} size={18} />
-              <Text className={`font-semibold ${isEvent ? 'text-white' : 'text-gray-400'}`}>
+            <View className="flex-row items-center justify-center gap-1.5">
+              <Calendar color={isEvent ? '#ffffff' : '#9CA3AF'} size={16} />
+              <Text className={`text-sm font-semibold ${isEvent ? 'text-white' : 'text-gray-400'}`}>
                 Event
               </Text>
             </View>
@@ -168,12 +175,13 @@ const CreatorScreen = () => {
             onPress={() => {
               setIsEvent(false);
             }}
-            className={`flex-1 items-center justify-center rounded-2xl py-3 ${
+            className={`flex-1 items-center justify-center rounded-lg py-2.5 ${
               !isEvent ? 'bg-emerald-500' : 'bg-gray-700/50'
             }`}>
-            <View className="flex-row items-center justify-center gap-2">
-              <CheckSquare color={!isEvent ? '#ffffff' : '#9CA3AF'} size={18} />
-              <Text className={`font-semibold ${!isEvent ? 'text-white' : 'text-gray-400'}`}>
+            <View className="flex-row items-center justify-center gap-1.5">
+              <CheckSquare color={!isEvent ? '#ffffff' : '#9CA3AF'} size={16} />
+              <Text
+                className={`text-sm font-semibold ${!isEvent ? 'text-white' : 'text-gray-400'}`}>
                 Task
               </Text>
             </View>
@@ -246,28 +254,13 @@ const CreatorScreen = () => {
               onBlur={() => {}}
               loading={false}
             />
-            <Text style={{ marginBottom: 5, color: '#999', fontWeight: 'bold' }}>Category</Text>
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: '#374151',
-                borderRadius: 24,
-                marginBottom: 10,
-              }}>
-              <Picker
-                selectedValue={type}
-                onValueChange={(itemValue) => setType(itemValue)}
-                style={{ backgroundColor: '#1f2937', borderRadius: 24 }}>
-                {taskTypes.map((taskType) => (
-                  <Picker.Item
-                    key={taskType.value}
-                    label={taskType.label}
-                    value={taskType.value}
-                    color="#fff"
-                  />
-                ))}
-              </Picker>
-            </View>
+            <Picker
+              icon={SquareCheck}
+              label={'Task type'}
+              value={type}
+              onChange={setType}
+              items={taskTypes}
+            />
           </>
         )}
 
@@ -275,19 +268,19 @@ const CreatorScreen = () => {
           accessibilityRole="button"
           onPress={isEvent ? handleCreateEvent : handleCreateTask}
           disabled={loading || !isFormValid}
-          className="mt-2 items-center justify-center rounded-lg py-4"
+          className="mt-3 items-center justify-center rounded-lg py-3"
           style={{
             backgroundColor: loading ? '#374151' : isFormValid ? '#10B981' : 'rgba(55,65,81,0.5)',
           }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             {loading ? (
-              <Text style={{ fontSize: 18, fontWeight: '600', color: '#9CA3AF' }}>Creating...</Text>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#9CA3AF' }}>Creating...</Text>
             ) : (
               <>
-                <Sparkles color="#fff" size={20} />
+                <Sparkles color="#fff" size={18} />
                 <Text
                   style={{
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: '600',
                     color: isFormValid ? '#fff' : '#9CA3AF',
                   }}>

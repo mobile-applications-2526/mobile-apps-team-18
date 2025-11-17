@@ -5,7 +5,7 @@ import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
 import DormService from '../services/DormService';
 import SectionHeader from '../components/SectionHeader';
-import { Check, X } from 'lucide-react-native';
+import { ArrowLeft, Check, X } from 'lucide-react-native';
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
 
@@ -64,6 +64,11 @@ export const HomeScreen = () => {
       mutate('homeData', response, false);
       mutate('homeData');
     }
+  };
+
+  const handleReset = () => {
+    setIsCreating(false);
+    setIsJoining(false);
   };
 
   const selectedDayLabel = useMemo(() => {
@@ -163,7 +168,7 @@ export const HomeScreen = () => {
             </Text>
 
             {!isJoining && !isCreating && (
-              <View className="flex gap-8">
+              <View className="flex gap-4">
                 <Pressable
                   onPress={() => setIsJoining(true)}
                   className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
@@ -192,13 +197,22 @@ export const HomeScreen = () => {
                   autoCapitalize="characters"
                 />
 
-                <Pressable
-                  onPress={handleJoinDorm}
-                  className="w-full rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
-                  accessibilityRole="button"
-                  accessibilityLabel="Join dorm">
-                  <Text className="text-center font-semibold text-white">Join Dorm</Text>
-                </Pressable>
+                <View className="flex w-full flex-row items-center gap-2">
+                  <Pressable
+                    onPress={handleReset}
+                    className="rounded-2xl bg-red-600 px-4 py-3 active:opacity-80"
+                    accessibilityRole="button"
+                    accessibilityLabel="Go back">
+                    <Text className="text-center font-semibold text-white">Back</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={handleJoinDorm}
+                    className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 active:opacity-80"
+                    accessibilityRole="button"
+                    accessibilityLabel="Join dorm">
+                    <Text className="text-center font-semibold text-white">Join Dorm</Text>
+                  </Pressable>
+                </View>
               </>
             )}
 
@@ -212,14 +226,22 @@ export const HomeScreen = () => {
                   onChangeText={setName}
                   autoCapitalize="characters"
                 />
-
-                <Pressable
-                  onPress={handleCreateDorm}
-                  className="w-full rounded-2xl bg-orange-400 px-4 py-3 active:opacity-80"
-                  accessibilityRole="button"
-                  accessibilityLabel="Create dorm">
-                  <Text className="text-center font-semibold text-white">Create dorm</Text>
-                </Pressable>
+                <View className="flex w-full flex-row items-center gap-2">
+                  <Pressable
+                    onPress={handleReset}
+                    className="rounded-2xl bg-red-600 px-4 py-3 active:opacity-80"
+                    accessibilityRole="button"
+                    accessibilityLabel="Go back">
+                    <Text className="text-center font-semibold text-white">Back</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={handleCreateDorm}
+                    className="flex-1 rounded-2xl bg-orange-400 px-4 py-3 active:opacity-80"
+                    accessibilityRole="button"
+                    accessibilityLabel="Create dorm">
+                    <Text className="text-center font-semibold text-white">Create dorm</Text>
+                  </Pressable>
+                </View>
               </>
             )}
           </View>

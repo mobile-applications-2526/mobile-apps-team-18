@@ -109,7 +109,7 @@ const ProfileScreen = () => {
     } catch (e: any) {
       console.error('Failed to update email:', e);
       setEmailError(true);
-      Alert.alert('Error', 'Failed to update email');
+      Alert.alert('Failed to update email', e.message);
       setTimeout(() => setEmailError(false), 3000);
       setEmail('');
     } finally {

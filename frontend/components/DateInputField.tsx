@@ -42,34 +42,34 @@ export default function DateInputField({
   const formatDate = (date: Date | null) => (date ? date.toLocaleDateString() : placeholder);
 
   return (
-    <View className="mb-4 overflow-hidden rounded-3xl border border-gray-700 bg-gray-800">
-      <View className="p-5">
-        <View className="mb-3 flex-row items-center">
+    <View className="mb-2 overflow-hidden rounded-2xl border border-gray-700 bg-gray-800">
+      <View className="p-3">
+        <View className="mb-2 flex-row items-center">
           <View
-            className={`mr-4 h-12 w-12 items-center justify-center rounded-2xl ${
+            className={`mr-3 h-9 w-9 items-center justify-center rounded-lg ${
               !value ? 'bg-gray-700' : 'bg-emerald-600/20'
             }`}>
-            <Icon color={value ? '#10B981' : '#9CA3AF'} size={22} />
+            <Icon color={value ? '#10B981' : '#9CA3AF'} size={18} />
           </View>
           <Text className="flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">
             {label}
           </Text>
           {loading && <ActivityIndicator size="small" color="#10B981" />}
           {!loading && success && (
-            <View className="rounded-full bg-emerald-600/20 p-1">
-              <CheckCircle color="#10B981" size={24} strokeWidth={2.5} />
+            <View className="rounded-full bg-emerald-600/20 p-0.5">
+              <CheckCircle color="#10B981" size={20} strokeWidth={2.5} />
             </View>
           )}
           {!loading && error && (
-            <View className="rounded-full bg-red-600/20 p-1">
-              <XCircle color="#EF4444" size={24} strokeWidth={2.5} />
+            <View className="rounded-full bg-red-600/20 p-0.5">
+              <XCircle color="#EF4444" size={20} strokeWidth={2.5} />
             </View>
           )}
         </View>
 
         <Pressable
           onPress={() => setShowPicker(true)}
-          className="rounded-2xl border border-gray-600 bg-gray-900 px-5 py-4">
+          className="rounded-lg border border-gray-600 bg-gray-900 px-3 py-2.5">
           <Text className={value ? 'text-white' : 'text-gray-500'}>{formatDate(value)}</Text>
         </Pressable>
 
@@ -78,7 +78,7 @@ export default function DateInputField({
             <TouchableWithoutFeedback onPress={() => setShowPicker(false)}>
               <View className="flex-1 items-center justify-center bg-black/50">
                 <TouchableWithoutFeedback>
-                  <View className="rounded-3xl bg-gray-800 px-5 py-8">
+                  <View className="rounded-2xl bg-gray-800 px-5 py-8">
                     <DateTimePicker
                       value={value || new Date()}
                       mode="date"
@@ -86,9 +86,17 @@ export default function DateInputField({
                       textColor="#fff"
                       onChange={(event, selectedDate) => {
                         if (selectedDate) onChange(selectedDate);
-                        onConfirm();
                       }}
                     />
+                    <Pressable
+                      onPress={() => {
+                        if (!value) onChange(new Date());
+                        onConfirm();
+                        setShowPicker(false);
+                      }}
+                      className="mt-4 rounded-lg bg-emerald-600 px-4 py-2">
+                      <Text className="text-center font-medium text-white">Confirm</Text>
+                    </Pressable>
                   </View>
                 </TouchableWithoutFeedback>
               </View>
@@ -102,7 +110,10 @@ export default function DateInputField({
             mode="date"
             display="default"
             onChange={(event, selectedDate) => {
-              if (selectedDate) onChange(selectedDate);
+              if (event.type === 'set') {
+                onChange(selectedDate || new Date());
+                onConfirm();
+              }
               setShowPicker(false);
             }}
           />
