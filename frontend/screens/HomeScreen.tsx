@@ -252,6 +252,13 @@ export const HomeScreen = () => {
     <ScrollView contentContainerClassName="px-6 pt-6 pb-10" showsVerticalScrollIndicator={false}>
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-3xl font-bold text-white">{dorm?.name}</Text>
+        <Pressable
+          onPress={() => Alert.alert("Your dorm's code", dorm?.code)}
+          className="rounded-2xl bg-emerald-600 px-3 py-2 active:opacity-80"
+          accessibilityRole="button"
+          accessibilityLabel="Go back">
+          <Text className="text-md font-bold text-white">View code</Text>
+        </Pressable>
       </View>
 
       {/* Calendar Component */}
