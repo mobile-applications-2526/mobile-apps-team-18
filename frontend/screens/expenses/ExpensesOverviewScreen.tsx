@@ -5,6 +5,7 @@ import useSWR, { mutate } from 'swr';
 import { ArrowLeft, Plus, Receipt, User as UserIcon } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import ExpenseService from '../../services/ExpenseService';
+import FloatingButton from '../../components/FloatingButton';
 
 export default function ExpensesOverviewScreen() {
   const { auth } = useAuth();
@@ -188,15 +189,13 @@ export default function ExpensesOverviewScreen() {
         )}
       </ScrollView>
 
-      <View className="absolute bottom-28 left-6 right-6">
-        <Pressable
-          onPress={() => router.push('/create-expense')}
-          accessibilityRole="button"
-          className="flex-row items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-6 py-4 shadow-lg active:opacity-90">
-          <Plus color="#fff" size={20} />
-          <Text className="text-base font-semibold text-white">Create Expense</Text>
-        </Pressable>
-      </View>
+      <FloatingButton
+        icon={Plus}
+        onPress={() => router.push('/create-expense')}
+        title="Create Expense"
+        color="#fff"
+        backgroundColor="#059669"
+      />
     </>
   );
 }

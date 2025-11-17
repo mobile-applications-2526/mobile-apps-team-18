@@ -22,12 +22,14 @@ import {
   MapPin,
   Sparkles,
   SquareCheck,
+  User,
 } from 'lucide-react-native';
 import EventService from '../../services/EventService';
 import TaskService from '../../services/TaskService';
 import { Dorm, TaskType } from '../../types';
 import CategoryPickerField from '../../components/Picker';
 import Picker from '../../components/Picker';
+import FloatingButton from '../../components/FloatingButton';
 
 const CreatorScreen = () => {
   const { auth } = useAuth();
@@ -45,6 +47,8 @@ const CreatorScreen = () => {
   const [taskDate, setTaskDate] = useState<Date | null>(null);
   const [type, setType] = useState<TaskType | undefined>(undefined);
 
+  const [assignedUser, setAssignedUser] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
 
   const taskTypes = [
@@ -58,6 +62,12 @@ const CreatorScreen = () => {
   ];
 
   const { data: dorm } = useSWR<Dorm>(auth?.token ? 'homeData' : null);
+
+  const users =
+    dorm?.users
+      ?.filter((u) => u.username !== undefined)
+      .map((u) => ({ label: u.username!, value: u.id }))
+      .filter((user) => user.label !== undefined) || [];
 
   const hasDorm = Boolean(
     dorm &&
@@ -148,9 +158,9 @@ const CreatorScreen = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 12 }}>
+      <ScrollView className="px-6 py-6" contentContainerStyle={{ paddingBottom: 140 }}>
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-white">Creator</Text>
+          <Text className="text-3xl font-bold text-white">Creator</Text>
           <View className="items-center justify-center rounded-full bg-emerald-500/20 p-2">
             <Sparkles color="#10b981" size={20} />
           </View>
@@ -260,37 +270,28 @@ const CreatorScreen = () => {
               value={type}
               onChange={setType}
               items={taskTypes}
+              placeholder="Select a type..."
+            />
+            <Picker
+              icon={User}
+              label="Assign to"
+              value={assignedUser}
+              onChange={setAssignedUser}
+              items={users}
+              placeholder="Assign a user..."
             />
           </>
         )}
-
-        <Pressable
-          accessibilityRole="button"
-          onPress={isEvent ? handleCreateEvent : handleCreateTask}
-          disabled={loading || !isFormValid}
-          className="mt-3 items-center justify-center rounded-lg py-3"
-          style={{
-            backgroundColor: loading ? '#374151' : isFormValid ? '#10B981' : 'rgba(55,65,81,0.5)',
-          }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {loading ? (
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#9CA3AF' }}>Creating...</Text>
-            ) : (
-              <>
-                <Sparkles color="#fff" size={18} />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '600',
-                    color: isFormValid ? '#fff' : '#9CA3AF',
-                  }}>
-                  Create {isEvent ? 'Event' : 'Task'}
-                </Text>
-              </>
-            )}
-          </View>
-        </Pressable>
       </ScrollView>
+      <FloatingButton
+        onPress={isEvent ? handleCreateEvent : handleCreateTask}
+        icon={Sparkles}
+        color={'#fff'}
+        title={`Create ${isEvent ? 'Event' : 'Task'}`}
+        backgroundColor={isFormValid ? '#10B981' : '#9ba0a8'}
+        disabled={loading || !isFormValid}
+        loading={loading}
+      />
     </KeyboardAvoidingView>
   );
 };
