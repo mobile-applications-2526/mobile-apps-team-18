@@ -65,7 +65,6 @@ export default function InputField({
           placeholder={placeholder}
           placeholderTextColor="#6B7280"
           keyboardType={keyboardType}
-          autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
           className="rounded-lg border border-gray-600 bg-gray-900 px-3 py-2.5 text-base text-white"
           {...rest}
         />

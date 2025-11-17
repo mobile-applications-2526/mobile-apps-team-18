@@ -183,7 +183,7 @@ export default function ExpensesOverviewScreen() {
         ) : (
           <View className="rounded-2xl border border-gray-700 bg-gray-800 p-6">
             <Text className="text-center text-sm text-gray-400">
-              No expenses yet. Create one to get started!
+              No expenses yet. Go on a shopping spree!
             </Text>
           </View>
         )}

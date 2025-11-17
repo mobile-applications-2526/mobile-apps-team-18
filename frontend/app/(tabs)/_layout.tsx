@@ -24,9 +24,9 @@ export default function TabsLayout() {
           <Icon sf={'house.fill'} drawable="ic_menu_home" />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="settings">
-          <Label>Settings</Label>
-          <Icon sf={'gear'} drawable="ic_account_circle" />
+        <NativeTabs.Trigger name="expenses" hidden={!hasDorm}>
+          <Label>Expenses</Label>
+          <Icon sf={'dollarsign.circle'} drawable="ic_menu_expenses" />
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="creator" role="search" hidden={!hasDorm}>
@@ -34,9 +34,9 @@ export default function TabsLayout() {
           <Icon sf={'plus'} drawable="ic_menu_add" />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="expenses" hidden={!hasDorm}>
-          <Label>Expenses</Label>
-          <Icon sf={'dollarsign.circle'} drawable="ic_menu_expenses" />
+        <NativeTabs.Trigger name="settings">
+          <Label>Settings</Label>
+          <Icon sf={'gear'} drawable="ic_account_circle" />
         </NativeTabs.Trigger>
       </NativeTabs>
     </ActionSheetProvider>
