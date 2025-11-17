@@ -13,6 +13,7 @@ export type User = {
   email?: string;
   geboortedatum?: string;
   locatie?: string;
+  joinedEvents?: Event[];
 };
 
 export type SignupInput = {
@@ -38,6 +39,7 @@ export type Event = {
   kotAddress?: string;
   organizer?: User;
   done?: boolean;
+  participants?: User[];
 };
 
 export type Task = {

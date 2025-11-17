@@ -6,24 +6,28 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import be.ucll.controller.dto.TaskDTO;
+import be.ucll.exception.DormException;
 import be.ucll.exception.TaskException;
+import be.ucll.exception.UserException;
 import be.ucll.model.Dorm;
 import be.ucll.model.Task;
 import be.ucll.model.User;
+import be.ucll.repository.DormRepository;
 import be.ucll.repository.TaskRepository;
+import be.ucll.repository.UserRepository;
 import be.ucll.types.TaskType;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final DormService dormService;
-    private final UserService userService;
+    private final DormRepository dormRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository, DormService dormService, UserService userService) {
+    public TaskService(TaskRepository taskRepository, DormRepository dormRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
-        this.dormService = dormService;
-        this.userService = userService;
+        this.dormRepository = dormRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Task> getAllTasks() {
@@ -38,15 +42,18 @@ public class TaskService {
     }
 
     public Task createTask(String dormCode, TaskDTO taskDTO, Authentication authentication) {
-        User user = userService.findByUsername(authentication.getName());
-        Dorm dorm = dormService.getDormByCode(dormCode);
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UserException("User not found"));
+
+        Dorm dorm = dormRepository.findByCode(dormCode).orElseThrow(() -> new UserException("Dorm not found"));
         Task task = new Task(
                 taskDTO.title(),
                 taskDTO.description(),
                 taskDTO.type(),
-                taskDTO.date(),
-                user
-        );
+                taskDTO.date());
+
+        task.setCreatedBy(user);
+        task.setAssignedUser(user);
 
         if (!dorm.getUsers().contains(user)) {
             throw new TaskException("User is not authorized to create tasks for this dorm");
@@ -63,6 +70,20 @@ public class TaskService {
 
     public List<Task> getTaskByType(TaskType type) {
         return taskRepository.findByType(type);
+    }
+
+    public Task changeDone(Authentication authentication, Long taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new UserException("User not found"));
+        Dorm dorm = dormRepository.findByUsers_Username(authentication.getName())
+                .orElseThrow(() -> new UserException("You are not part of this dorm."));
+
+        if (dorm == null) {
+            throw new DormException("You are not part of this dorm.");
+        }
+
+        task.setDone(!task.isDone());
+
+        return taskRepository.save(task);
     }
 
 }

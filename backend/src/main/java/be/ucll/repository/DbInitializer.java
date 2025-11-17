@@ -66,15 +66,30 @@ public class DbInitializer {
 
                 // --- TASKS ---
                 Task task1 = new Task("Vacuum the living room", "Use the Dyson in the closet", TaskType.CLEANING,
-                                LocalDate.now().plusDays(1), nathan);
+                                LocalDate.now());
                 Task task2 = new Task("Wash the dishes", "Don't forget to use the eco cycle", TaskType.DISHES,
-                                LocalDate.now().plusDays(2), rajo);
+                                LocalDate.now().plusDays(2));
                 Task task3 = new Task("Take out the trash", "Bins are outside near the gate", TaskType.CLEANING,
-                                LocalDate.now().plusDays(3), sander);
+                                LocalDate.now().plusDays(3));
                 Task task4 = new Task("Buy paper towels", "Get a pack from Carrefour", TaskType.GROCERIES,
-                                LocalDate.now().plusDays(5), nathan);
+                                LocalDate.now().plusDays(5));
                 Task task5 = new Task("Clean the kitchen", "Deep clean scheduled before inspection", TaskType.CLEANING,
-                                LocalDate.now().plusDays(6), rajo);
+                                LocalDate.now().plusDays(6));
+
+                task1.setCreatedBy(nathan);
+                task1.setAssignedUser(nathan);
+
+                task2.setCreatedBy(rajo);
+                task2.setAssignedUser(rajo);
+
+                task3.setCreatedBy(sander);
+                task3.setAssignedUser(sander);
+
+                task4.setCreatedBy(nathan);
+                task4.setAssignedUser(nathan);
+
+                task5.setCreatedBy(sander);
+                task5.setAssignedUser(sander);
 
                 // Completing some tasks
                 task1.setDone(true);
@@ -98,7 +113,7 @@ public class DbInitializer {
                 // --- EVENTS ---
                 Event event1 = new Event("Spring Boot Workshop",
                                 "Learn how to build powerful web apps with Spring Boot.", "Common Room",
-                                LocalDate.now().plusDays(5), nathan);
+                                LocalDate.now(), nathan);
                 Event event2 = new Event("Pizza & Movie Night", "Relax evening watching movies and eating pizza.",
                                 "Living Room", LocalDate.now().plusDays(10), rajo);
                 Event event3 = new Event("Dorm Cleaning Day", "Everyone helps clean the shared spaces together.",

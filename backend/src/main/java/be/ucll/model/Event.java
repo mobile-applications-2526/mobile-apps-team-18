@@ -1,15 +1,18 @@
 package be.ucll.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -42,6 +45,10 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "organizer_id")
     private User organizer;
+
+    @ManyToMany(mappedBy = "joinedEvents")
+    @JsonManagedReference
+    private List<User> participants = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "dorm_id")
@@ -121,6 +128,28 @@ public class Event {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public List<User> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
+    }
+
+    public void addParticipant(User user) {
+        if (!this.participants.contains(user)) {
+            this.participants.add(user);
+            user.addEvent(this);
+        }
+    }
+
+    public void removeParticipant(User user) {
+        if (this.participants.contains(user)) {
+            this.participants.remove(user);
+            user.removeEvent(this);
+        }
     }
 
 }

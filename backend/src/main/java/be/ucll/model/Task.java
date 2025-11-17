@@ -57,12 +57,11 @@ public class Task {
     protected Task() {
     }
 
-    public Task(String title, String description, TaskType type, LocalDate date, User createdBy) {
+    public Task(String title, String description, TaskType type, LocalDate date) {
         setTitle(title);
         setDescription(description);
         setType(type);
         setDate(date);
-        setCreatedBy(createdBy);
     }
 
     public Long getId() {

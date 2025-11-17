@@ -12,4 +12,6 @@ public interface DormRepository extends JpaRepository<Dorm, Long> {
 
     Optional<Dorm> findByUsers_Id(Long id);
 
+    Optional<Dorm> findByUsers_Username(String username);
+
 }

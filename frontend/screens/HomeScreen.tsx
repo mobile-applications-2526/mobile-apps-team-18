@@ -5,13 +5,17 @@ import useSWR, { mutate } from 'swr';
 import { useState, useMemo } from 'react';
 import DormService from '../services/DormService';
 import SectionHeader from '../components/SectionHeader';
-import { Check, X } from 'lucide-react-native';
+import { Check, Plus, Unplug, X } from 'lucide-react-native';
 import React from 'react';
 import * as SecureStore from 'expo-secure-store';
+import TaskService from '../services/TaskService';
+import EventService from '../services/EventService';
+import { Dorm, Event, Task } from '../types';
 
 export const HomeScreen = () => {
   const { auth, isLoading: authLoading } = useAuth();
   const [code, setCode] = useState<string>('');
+  const [showCode, setShowCode] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [isJoining, setIsJoining] = useState<boolean>(false);
@@ -69,6 +73,59 @@ export const HomeScreen = () => {
   const handleReset = () => {
     setIsCreating(false);
     setIsJoining(false);
+  };
+
+  const handleChangeCompleted = async (taskId: number) => {
+    if (!auth?.token) return;
+
+    try {
+      const response = await TaskService.completeTask(auth.token, taskId);
+
+      if (response) {
+        mutate(
+          'homeData',
+          (data: any) => {
+            if (!data || !data.tasks) return data;
+            return {
+              ...data,
+              tasks: data.tasks.map((task: Task) =>
+                task.id === taskId ? { ...task, ...response } : task
+              ),
+            };
+          },
+          false
+        );
+      }
+    } catch (err) {
+      alert('Error: ' + err);
+    }
+  };
+
+  const handleJoinEvent = async (eventId: number) => {
+    if (!auth?.token) return;
+
+    try {
+      const response = await EventService.joinEvent(auth.token, eventId);
+
+      if (response) {
+        mutate(
+          'homeData',
+          (currentData?: Dorm) => {
+            if (!currentData || !currentData.events) return currentData;
+
+            return {
+              ...currentData,
+              events: currentData.events.map((event: Event) =>
+                event.id === eventId ? { ...event, ...response } : event
+              ),
+            };
+          },
+          false
+        );
+      }
+    } catch (err) {
+      alert('Error: ' + err);
+    }
   };
 
   const selectedDayLabel = useMemo(() => {
@@ -253,11 +310,13 @@ export const HomeScreen = () => {
       <View className="mb-6 flex-row items-center justify-between">
         <Text className="text-3xl font-bold text-white">{dorm?.name}</Text>
         <Pressable
-          onPress={() => Alert.alert("Your dorm's code", dorm?.code)}
+          onPress={() => setShowCode(!showCode)}
           className="rounded-2xl bg-emerald-600 px-3 py-2 active:opacity-80"
           accessibilityRole="button"
           accessibilityLabel="Go back">
-          <Text className="text-md font-bold text-white">View code</Text>
+          <Text className="text-md font-bold text-white">
+            {!showCode ? 'View code' : dorm?.code}
+          </Text>
         </Pressable>
       </View>
 
@@ -300,7 +359,7 @@ export const HomeScreen = () => {
           <View className="gap-3 pb-5">
             {filteredTasks.map((task) => (
               <View key={task.id} className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
-                <View className="flex-row items-start justify-between">
+                <View className="mb-3 flex-row items-start justify-between gap-3">
                   <View className="flex-1">
                     <Text className="mb-2 text-base font-semibold text-white">{task.title}</Text>
                     <View className="flex-row items-center gap-2">
@@ -308,45 +367,50 @@ export const HomeScreen = () => {
                         <Text className="text-xs font-medium text-emerald-400">Taak</Text>
                       </View>
                       <Text className="text-sm text-gray-400">{task.assignedUser?.username}</Text>
-                      <View
-                        className={`ml-auto rounded-full p-2 ${task.done ? 'bg-green-500/30' : 'bg-red-500/30'}`}>
-                        {task.done ? (
-                          <Check size={16} color="#22c55e" />
-                        ) : (
-                          <X size={16} color="#ef4444" />
-                        )}
-                      </View>
                     </View>
                   </View>
+                  <Pressable
+                    onPress={() => handleChangeCompleted(task.id!)}
+                    className={`rounded-lg p-2 ${
+                      task.done ? 'bg-emerald-600' : 'bg-gray-700'
+                    } active:opacity-80`}>
+                    <Check size={20} color="white" />
+                  </Pressable>
                 </View>
               </View>
             ))}
-            {filteredEvents.map((event) => (
-              <View key={event.id} className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
-                <View className="flex-row items-start justify-between">
-                  <View className="flex-1">
-                    <Text className="mb-2 text-base font-semibold text-white">{event.name}</Text>
-                    <View className="mb-1 flex-row items-center gap-2">
-                      <View className="rounded-full bg-purple-600/20 px-3 py-1">
-                        <Text className="text-xs font-medium text-purple-400">Evenement</Text>
+
+            {filteredEvents.map((event) => {
+              const isJoined = event.participants?.some((u) => u.username === auth.username);
+
+              return (
+                <View key={event.id} className="rounded-2xl border border-gray-700 bg-gray-900 p-4">
+                  <View className="mb-3 flex-row items-start justify-between gap-3">
+                    <View className="flex-1">
+                      <Text className="mb-2 text-base font-semibold text-white">{event.name}</Text>
+                      <View className="flex-row items-center gap-2">
+                        <View className="rounded-full bg-purple-600/20 px-3 py-1">
+                          <Text className="text-xs font-medium text-purple-400">Evenement</Text>
+                        </View>
+                        <Text className="text-sm text-gray-400">{event.organizer?.username}</Text>
                       </View>
-                      <Text className="text-sm text-gray-400">{event.organizer?.username}</Text>
-                      <View
-                        className={`ml-auto rounded-full p-2 ${event.done ? 'bg-green-500/30' : 'bg-red-500/30'}`}>
-                        {event.done ? (
-                          <Check size={16} color="#22c55e" />
-                        ) : (
-                          <X size={16} color="#ef4444" />
-                        )}
-                      </View>
+                      {event.location && (
+                        <Text className="mt-2 text-xs text-gray-500">📍 {event.location}</Text>
+                      )}
                     </View>
-                    {event.location && (
-                      <Text className="mt-1 text-xs text-gray-500">📍 {event.location}</Text>
-                    )}
+                    <Pressable
+                      onPress={() => handleJoinEvent(event.id)}
+                      className={`rounded-lg px-4 py-2 ${
+                        isJoined ? 'bg-red-600' : 'bg-emerald-600'
+                      } active:opacity-80`}>
+                      <Text className="font-semibold text-white">
+                        {isJoined ? 'Leave' : 'Join'}
+                      </Text>
+                    </Pressable>
                   </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         )}
       </View>

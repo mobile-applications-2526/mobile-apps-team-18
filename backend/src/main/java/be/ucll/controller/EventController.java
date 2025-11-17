@@ -16,6 +16,7 @@ import be.ucll.controller.dto.EventDTO;
 import be.ucll.model.Event;
 import be.ucll.service.EventService;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/events")
@@ -38,7 +39,8 @@ public class EventController {
     }
 
     @PostMapping("/{dormCode}")
-    public Event createEvent(@PathVariable String dormCode, @Valid @RequestBody EventDTO event, Authentication authentication) {
+    public Event createEvent(@PathVariable String dormCode, @Valid @RequestBody EventDTO event,
+            Authentication authentication) {
         return eventService.createEvent(dormCode, event, authentication);
     }
 
@@ -50,5 +52,10 @@ public class EventController {
     @GetMapping("/{id}")
     public Event getEventById(@PathVariable Long id) {
         return eventService.getEventById(id);
+    }
+
+    @PutMapping("/join/{eventId}")
+    public Event putMethodName(Authentication authentication, @PathVariable Long eventId) {
+        return eventService.joinEvent(authentication, eventId);
     }
 }

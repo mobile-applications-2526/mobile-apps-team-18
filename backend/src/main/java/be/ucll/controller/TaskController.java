@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/tasks")
@@ -40,7 +41,8 @@ public class TaskController {
     }
 
     @PostMapping("/{dormCode}")
-    public Task createTask(@PathVariable String dormCode, @Valid @RequestBody TaskDTO taskDTO, Authentication authentication) {
+    public Task createTask(@PathVariable String dormCode, @Valid @RequestBody TaskDTO taskDTO,
+            Authentication authentication) {
         return taskService.createTask(dormCode, taskDTO, authentication);
     }
 
@@ -52,6 +54,11 @@ public class TaskController {
     @GetMapping("/type")
     public List<Task> getTaskByType(@RequestParam TaskType type) {
         return taskService.getTaskByType(type);
+    }
+
+    @PutMapping("/changeCompleted/{taskId}")
+    public Task changeCompleted(Authentication authentication, @PathVariable Long taskId) {
+        return taskService.changeDone(authentication, taskId);
     }
 
 }
