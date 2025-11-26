@@ -192,7 +192,7 @@ export default function ExpensesOverviewScreen() {
       <FloatingButton
         icon={Plus}
         onPress={() => router.push('/create-expense')}
-        title="Create Expense"
+        title="New Expense"
         color="#fff"
         backgroundColor="#059669"
       />
