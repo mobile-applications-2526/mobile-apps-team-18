@@ -22,29 +22,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get Started
 
-### Backend
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Run the backend server:
-   ```bash
-   mvn spring-boot:run
-   ```
-
-### Frontend
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    npm install
    ```
-3. Start your Android SDK.
-4. Run the Android app:
+   
+2. Run the app:
    ```bash
-   npm run android
+   npm run start
    ```
