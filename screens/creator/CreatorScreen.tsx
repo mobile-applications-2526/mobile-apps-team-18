@@ -141,7 +141,11 @@ const CreatorScreen = () => {
     eventDescription.trim().length > 0;
 
   const isTaskFormValid =
-    title.trim().length > 0 && taskDate !== null && taskDetails.trim().length > 0 && type !== null;
+    title.trim().length > 0 &&
+    taskDate !== null &&
+    taskDetails.trim().length > 0 &&
+    type !== null &&
+    assignedUser !== null;
 
   const isFormValid = isEvent ? isEventFormValid : isTaskFormValid;
 

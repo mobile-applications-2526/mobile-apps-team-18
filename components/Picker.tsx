@@ -26,8 +26,14 @@ export default function Picker({
   placeholder = 'Select...',
 }: Props) {
   const pickerRef = React.useRef<any>(null);
+
+  const selectedItem = items.find((item) => item.value === value);
+
   const displayValue =
-    value !== undefined ? items.find((item) => item.value === value)?.label : placeholder;
+    value === null || value === undefined || selectedItem === undefined
+      ? placeholder
+      : selectedItem.label;
+
   const isEmpty = value === undefined || value === null || value === '';
 
   return (

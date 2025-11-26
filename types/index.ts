@@ -63,14 +63,14 @@ export type Dorm = {
 };
 
 export enum TaskType {
-  CLEANING,
-  TRASH,
-  DISHES,
-  BATHROOM,
-  KITCHEN,
-  COOKING,
-  GROCERIES,
-};
+  CLEANING = 'CLEANING',
+  BATHROOM = 'BATHROOM',
+  COOKING = 'COOKING',
+  GROCERIES = 'GROCERIES',
+  DISHES = 'DISHES',
+  KITCHEN = 'KITCHEN',
+  TRASH = 'TRASH',
+}
 
 export type ExpenseShare = {
   id?: number;
