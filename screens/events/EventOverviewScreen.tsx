@@ -61,27 +61,27 @@ export default function EventOverviewScreen({ eventId }: Props) {
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = [
-      'januari',
-      'februari',
-      'maart',
-      'april',
-      'mei',
-      'juni',
-      'juli',
-      'augustus',
-      'september',
-      'oktober',
-      'november',
-      'december',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     const day = days[date.getDay()];
     const dateNum = date.getDate();
     const month = months[date.getMonth()];
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day} ${dateNum} ${month} om ${hours}:${minutes}`;
+    return `${day} ${dateNum} ${month} at ${hours}:${minutes}`;
   };
 
   return (
@@ -102,17 +102,17 @@ export default function EventOverviewScreen({ eventId }: Props) {
       <View className="mb-4 rounded-3xl border border-gray-700 bg-gray-800 p-6">
         <View className="mb-3 flex-row items-center justify-between">
           <View className="rounded-full bg-purple-600/20 px-3 py-1">
-            <Text className="text-xs font-medium text-purple-400">Evenement</Text>
+            <Text className="text-xs font-medium text-purple-400">Event</Text>
           </View>
           {isJoined && (
             <View className="flex-row items-center gap-1">
               <View className="h-2 w-2 rounded-full bg-emerald-500" />
-              <Text className="text-xs text-emerald-500">Je neemt deel</Text>
+              <Text className="text-xs text-emerald-500">You're participating</Text>
             </View>
           )}
           {isOrganizer && (
             <View className="rounded-full bg-orange-400/20 px-3 py-1">
-              <Text className="text-xs font-medium text-orange-400">Organisator</Text>
+              <Text className="text-xs font-medium text-orange-400">Organiser</Text>
             </View>
           )}
         </View>
@@ -121,7 +121,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
 
       {/* Event Info Card */}
       <View className="mb-4 rounded-3xl border border-gray-700 bg-gray-800 p-6">
-        <Text className="mb-4 text-lg font-semibold text-white">Informatie</Text>
+        <Text className="mb-4 text-lg font-semibold text-white">Information</Text>
 
         {/* Date */}
         <View className="mb-4 flex-row items-start">
@@ -129,7 +129,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
             <Calendar size={16} color="#10B981" />
           </View>
           <View className="flex-1">
-            <Text className="mb-1 text-xs font-medium text-gray-400">Datum & Tijd</Text>
+            <Text className="mb-1 text-xs font-medium text-gray-400">Date & Time</Text>
             <Text className="text-base text-white">{formatDate(event.date)}</Text>
           </View>
         </View>
@@ -141,9 +141,9 @@ export default function EventOverviewScreen({ eventId }: Props) {
               <MapPin size={16} color="#10B981" />
             </View>
             <View className="flex-1">
-              <Text className="mb-1 text-xs font-medium text-gray-400">Locatie</Text>
+              <Text className="mb-1 text-xs font-medium text-gray-400">Location</Text>
               <Text className="text-base text-white">
-                {event.location || event.kotAddress || 'Geen locatie opgegeven'}
+                {event.location || event.kotAddress || 'No location provided'}
               </Text>
             </View>
           </View>
@@ -156,7 +156,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
               <User size={16} color="#10B981" />
             </View>
             <View className="flex-1">
-              <Text className="mb-1 text-xs font-medium text-gray-400">Organisator</Text>
+              <Text className="mb-1 text-xs font-medium text-gray-400">Organiser</Text>
               <Text className="text-base text-white">{event.organizer.username}</Text>
             </View>
           </View>
@@ -166,7 +166,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
       {/* Description Card */}
       {event.description && (
         <View className="rounded-3xl border border-gray-700 bg-gray-800 p-6">
-          <Text className="mb-3 text-lg font-semibold text-white">Beschrijving</Text>
+          <Text className="mb-3 text-lg font-semibold text-white">Description</Text>
           <Text className="text-base leading-relaxed text-gray-300">{event.description}</Text>
         </View>
       )}
@@ -179,7 +179,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
               <Users size={16} color="#10B981" />
             </View>
             <Text className="text-lg font-semibold text-white">
-              Deelnemers ({event.participants.length})
+              Participants ({event.participants.length})
             </Text>
           </View>
           <View className="gap-2">
@@ -215,7 +215,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
           disabled={isOrganizer}
           accessibilityLabel={isJoined ? 'Leave event' : 'Join event'}>
           <Text className="text-lg font-semibold text-white">
-            {isOrganizer ? 'This is your event' : isJoined ? 'Verlaat Evenement' : 'Doe Mee'}
+            {isOrganizer ? 'This is your event' : isJoined ? 'Leave event' : 'Join event'}
           </Text>
         </Pressable>
       )}
@@ -224,8 +224,8 @@ export default function EventOverviewScreen({ eventId }: Props) {
       <View className="mt-4 rounded-2xl border border-gray-700 bg-gray-800 p-4">
         <Text className="text-center text-sm text-gray-400">
           {isOrganizer
-            ? 'Als organisator kun je dit evenement beheren'
-            : 'Neem deel aan dit evenement om op de hoogte te blijven'}
+            ? 'As the organizer, you can manage this event'
+            : 'Join this event to stay informed'}
         </Text>
       </View>
     </ScrollView>
