@@ -113,20 +113,20 @@ export const HomeScreen = () => {
 
   const selectedDayLabel = useMemo(() => {
     const date = new Date(selectedDate);
-    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = [
-      'januari',
-      'februari',
-      'maart',
-      'april',
-      'mei',
-      'juni',
-      'juli',
-      'augustus',
-      'september',
-      'oktober',
-      'november',
-      'december',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
   }, [selectedDate]);
@@ -335,7 +335,7 @@ export const HomeScreen = () => {
         {filteredTasks.length === 0 && filteredEvents.length === 0 ? (
           <View className="py-8">
             <Text className="text-center text-sm text-gray-500">
-              Geen taken of evenementen voor deze dag
+              No tasks or events for this day
             </Text>
           </View>
         ) : (
@@ -381,7 +381,7 @@ export const HomeScreen = () => {
                       </View>
                       <View className="flex-row items-center gap-2">
                         <View className="rounded-full bg-purple-600/20 px-3 py-1">
-                          <Text className="text-xs font-medium text-purple-400">Evenement</Text>
+                          <Text className="text-xs font-medium text-purple-400">Event</Text>
                         </View>
                         <Text className="text-sm text-gray-400">{event.organizer?.username}</Text>
                       </View>
@@ -391,7 +391,7 @@ export const HomeScreen = () => {
                       {isJoined && (
                         <View className="mt-2 flex-row items-center gap-1">
                           <View className="h-2 w-2 rounded-full bg-emerald-500" />
-                          <Text className="text-xs text-emerald-500">Je neemt deel</Text>
+                          <Text className="text-xs text-emerald-500">You're participating</Text>
                         </View>
                       )}
                     </View>
