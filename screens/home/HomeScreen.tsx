@@ -369,6 +369,7 @@ export const HomeScreen = () => {
               return (
                 <Pressable
                   key={event.id}
+                  data-cy={`event-card-${event.id}`}
                   onPress={() => handleEventPress(event.id)}
                   className="rounded-2xl border border-gray-700 bg-gray-900 p-4 active:bg-gray-800">
                   <View className="flex-row items-start justify-between gap-3">

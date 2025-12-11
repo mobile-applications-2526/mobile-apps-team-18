@@ -208,6 +208,7 @@ export default function EventOverviewScreen({ eventId }: Props) {
       {!isOrganizer && (
         <Pressable
           onPress={handleJoinLeave}
+          data-cy={isJoined ? 'leave-event-button' : 'join-event-button'}
           className={`mt-4 items-center rounded-3xl px-6 py-4 active:opacity-80 ${
             isOrganizer ? 'bg-gray-600' : isJoined ? 'bg-red-600' : 'bg-emerald-600'
           }`}
