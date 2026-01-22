@@ -15,7 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "backgroundColor": "#111827"
+      "backgroundColor": "#111827",
+      "bundleIdentifier": "com.n4thanj.KotConnect",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "edgeToEdgeEnabled": true,
@@ -44,6 +48,7 @@
       "eas": {
         "projectId": "ec7557b0-a884-48ab-873d-0272dc08c663"
       }
-    }
+    },
+    "owner": "n4thanj"
   }
 }
