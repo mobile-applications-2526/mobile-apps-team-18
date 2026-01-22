@@ -22,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash-icon2.png",
         "backgroundColor": "#111827"
-      }
+      },
+      "package": "com.n4thanj.KotConnect"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,12 @@
           "imageWidth": 200
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ec7557b0-a884-48ab-873d-0272dc08c663"
+      }
+    }
   }
 }
