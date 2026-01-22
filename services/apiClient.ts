@@ -13,7 +13,7 @@ function resolveApiBase() {
     return `http://${host}:8080`;
   }
 
-  return 'https://kotconnect-backend-team18-ekd9eefwh9gpdmcp.westeurope-01.azurewebsites.net';
+  return 'https://kotconnect-team18-backend-hshwbkhff3gzf7b3.westeurope-01.azurewebsites.net';
 }
 
 export const API_BASE = resolveApiBase();

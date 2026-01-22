@@ -90,6 +90,7 @@ const LoginScreen = () => {
                   className="rounded-2xl border border-gray-700 bg-gray-800 px-4 py-3 text-base text-white"
                   onFocus={() => setInputFocused(true)}
                   onBlur={() => setInputFocused(false)}
+                  testID="username-input"
                 />
               </View>
 
@@ -105,6 +106,7 @@ const LoginScreen = () => {
                     className="rounded-2xl border border-gray-700 bg-gray-800 px-4 py-3 pr-12 text-base text-white"
                     onFocus={() => setInputFocused(true)}
                     onBlur={() => setInputFocused(false)}
+                    testID="password-input"
                   />
                   <Pressable
                     onPress={() => setShowPassword((prev) => !prev)}
@@ -128,7 +130,8 @@ const LoginScreen = () => {
               onPress={handleLogin}
               className={`w-full items-center justify-center rounded-2xl px-4 py-4 active:opacity-90 ${
                 canSubmit ? 'bg-emerald-600' : 'bg-emerald-300'
-              }`}>
+              }`}
+              testID="submit-button">
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
