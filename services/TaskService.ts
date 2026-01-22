@@ -17,6 +17,7 @@ export async function createTask(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ title, date, type, description }),
+    credentials: 'include',
   });
   return await handleJson(res);
 }
@@ -28,6 +29,7 @@ export async function completeTask(token: string, taskId: number): Promise<Task>
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return await handleJson(res);
 }

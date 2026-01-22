@@ -6,6 +6,7 @@ export async function login(username: string, password: string): Promise<Authent
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ username, password }),
+    credentials: 'include',
   });
   const data = await handleJson<AuthenticationResponse>(res);
   if (!data?.token) {
@@ -19,6 +20,7 @@ export async function signup(input: SignupInput): Promise<SignupUser> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify(input),
+    credentials: 'include',
   });
   return handleJson<SignupUser>(res);
 }
@@ -30,6 +32,7 @@ export async function getProfile(token: string): Promise<User> {
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return handleJson<User>(res);
 }
@@ -44,6 +47,7 @@ export async function updateUsername(
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return handleJson<AuthenticationResponse>(res);
 }
@@ -55,6 +59,7 @@ export async function updateEmail(token: string, email: string): Promise<Authent
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return handleJson<AuthenticationResponse>(res);
 }
@@ -69,6 +74,7 @@ export async function updateLocation(
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return handleJson<AuthenticationResponse>(res);
 }
@@ -83,6 +89,7 @@ export async function updateBirthday(
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return handleJson<AuthenticationResponse>(res);
 }
@@ -94,6 +101,7 @@ export async function deleteProfile(token: string): Promise<string> {
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return handleJson<string>(res);
 }

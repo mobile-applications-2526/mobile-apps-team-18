@@ -9,6 +9,7 @@ export async function getDorm(token: string): Promise<Dorm | null> {
       Accept: 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
 
   if (res.status === 204) {
@@ -26,6 +27,7 @@ export async function addUserToDormByCode(token: string, code: string): Promise<
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ code }),
+    credentials: 'include',
   });
   return await handleJson(res);
 }
@@ -38,6 +40,7 @@ export async function createDorm(token: string, name: string): Promise<Dorm> {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ name }),
+    credentials: 'include',
   });
   return await handleJson(res);
 }
@@ -49,6 +52,7 @@ export async function leaveDorm(token: string): Promise<Dorm> {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
+    credentials: 'include',
   });
   return await handleJson(res);
 }

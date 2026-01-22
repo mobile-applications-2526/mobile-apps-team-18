@@ -16,6 +16,7 @@ export async function createEvent(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ name, date, location, description }),
+    credentials: 'include',
   });
   return await handleJson(res);
 }
@@ -26,6 +27,7 @@ export async function joinEvent(token: string, eventId: number): Promise<Event> 
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      credentials: 'include',
     },
   });
   return await handleJson(res);
@@ -37,6 +39,7 @@ export async function getById(token: string, eventId: number): Promise<Event> {
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      credentials: 'include',
     },
   });
   return await handleJson(res);
